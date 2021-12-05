@@ -18,7 +18,7 @@ Here are some ideas to get you started:
 <h3 align="center">
   Welcome to Experimental Life profile!
   <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="28">
-</h3> j
+</h3>
 
 <table align="right">
  <tr><td><a href="README_es.md"><img src="images/us-flag.png" height="13"> Español</a></td></tr>
