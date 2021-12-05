@@ -21,8 +21,9 @@ Here are some ideas to get you started:
 </h3> j
 
 <table align="right">
- <tr><td><a href="README_es.md"><img src="images/us-flag.png" height="13"> Español</a></td></tr>
+ <tr><td><a href="README.md"><img src="images/us-flag.png" height="13"> English</a></td></tr>
 </table>
+
 
 
 <p align="center">
