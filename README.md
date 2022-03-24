@@ -16,7 +16,7 @@ Here are some ideas to get you started:
 
 
 <h3 align="center">
-  Welcome to Experimental Life profile!
+  Welcome to Experimental Life's profile!
   <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="28">
 </h3>
 
