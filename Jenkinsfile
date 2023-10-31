@@ -13,7 +13,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                echo 'deploy is running!'
+                echo 'deploy is running.'
                 //sh 'docker-compose down -v'
                 //sh 'docker-compose up -d --build'
             }
