@@ -13,6 +13,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
+                sh 'docker rm -f heaveless'
                 sh 'docker run -d --name heaveless -p 3000:80 heaveless:latest'
             }
         }
