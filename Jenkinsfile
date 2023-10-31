@@ -1,15 +1,17 @@
 pipeline {
     agent any
     stages {
-        stage('build') {
-            echo 'build stage not found'
+        stage('Build') {
+            steps {
+                echo 'build stage not found'
+            }
         }
-
-        stage('tests') {
-            echo 'tests stage not found'
+        stage('Test') {
+            steps {
+                echo 'tests stage not found'
+            }
         }
-
-        stages('deploy') {
+        stage('Deploy') {
             steps {
                 sh 'docker-compose down -v'
                 sh 'docker-compose up -d --build'
