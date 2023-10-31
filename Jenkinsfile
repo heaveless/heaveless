@@ -1,20 +1,19 @@
 pipeline {
     agent any
     stages {
-        stage('Build') {
-            steps {
-                echo 'build stage not found'
-            }
-        }
         stage('Test') {
             steps {
                 echo 'tests stage not found'
             }
         }
+        stage('Build') {
+            steps {
+                sh 'docker build . -t heaveless:latest'
+            }
+        }
         stage('Deploy') {
             steps {
-                echo 'deploy is running.'
-                sh 'docker run -it -p 3000:80 heaveless'
+                sh 'docker run --name heaveless -p 3000:80 heaveless:latest'
             }
         }
     }
