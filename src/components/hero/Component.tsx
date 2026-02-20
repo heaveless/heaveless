@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'preact/hooks'
+import { useEffect, useRef, useState } from 'preact/hooks'
 
 import robotImg from '../../assets/robot.png'
 import { NODES, ORBIT_SPEED } from './constants'
@@ -10,6 +10,7 @@ import { drawStars } from './draw/stars'
 import { drawNodes } from './draw/nodes'
 import { drawRobot } from './draw/robot'
 import { drawTVScreen } from './draw/tvScreen'
+import { MobileMenu } from './MobileMenu'
 import type { Star } from './types'
 
 export function Hero() {
@@ -20,6 +21,16 @@ export function Hero() {
   const globalAngle  = useRef<number>(0)
   const pausedRef    = useRef<boolean>(false)
   const hoveredIdx   = useRef<number>(-1)
+
+  const [isMobileView, setIsMobileView] = useState(
+    () => window.innerWidth < window.innerHeight,
+  )
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobileView(window.innerWidth < window.innerHeight)
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   useEffect(() => {
     const canvas = canvasRef.current as HTMLCanvasElement
@@ -39,6 +50,7 @@ export function Hero() {
     const getHitIndex = (clientX: number, clientY: number): number => {
       const rect   = canvas.getBoundingClientRect()
       const layout = computeLayout(canvas.width, canvas.height)
+      if (layout.isMobile) return -1  // nodes hidden on mobile
       return hitIndex(
         clientX - rect.left,
         clientY - rect.top,
@@ -69,8 +81,8 @@ export function Hero() {
 
     const onTouchMove = (e: TouchEvent) => {
       e.preventDefault()
-      const touch = e.touches[0]
-      const idx   = getHitIndex(touch.clientX, touch.clientY)
+      const touch  = e.touches[0]
+      const idx    = getHitIndex(touch.clientX, touch.clientY)
       hoveredIdx.current = idx
       pausedRef.current  = idx !== -1
     }
@@ -101,7 +113,9 @@ export function Hero() {
       drawBackground(ctx, w, h)
       drawStars(ctx, starsRef.current, now * 0.001)
 
-      drawNodes(ctx, cx, cy, layout, globalAngle.current, hoveredIdx.current)
+      if (!layout.isMobile) {
+        drawNodes(ctx, cx, cy, layout, globalAngle.current, hoveredIdx.current)
+      }
 
       if (processedRef.current) {
         const floatY = Math.sin(now * 0.0018) * (layout.botSz * 0.04)
@@ -126,9 +140,12 @@ export function Hero() {
   }, [])
 
   return (
-    <canvas
-      ref={canvasRef}
-      style={{ position: 'fixed', inset: 0, width: '100%', height: '100%', display: 'block' }}
-    />
+    <>
+      <canvas
+        ref={canvasRef}
+        style={{ position: 'fixed', inset: 0, width: '100%', height: '100%', display: 'block' }}
+      />
+      {isMobileView && <MobileMenu />}
+    </>
   )
 }

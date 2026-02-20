@@ -1,15 +1,21 @@
 import { MOBILE_MARGIN, NODE_ORBIT_RATIO, NODE_COUNT, ORBIT_STEP } from '../constants'
 import type { Layout } from '../types'
 
+const MOBILE_ROBOT_MARGIN = 24
+
 export function computeLayout(canvasWidth: number, canvasHeight: number): Layout {
-  const isMobile = canvasWidth < canvasHeight
-  const orbitR   = isMobile
+  const mobile = canvasWidth < canvasHeight
+  const orbitR = mobile
     ? (canvasWidth - MOBILE_MARGIN * 2) / 2 / (1 + NODE_ORBIT_RATIO)
     : Math.min(canvasWidth, canvasHeight) * 0.28
+  const botSz = mobile
+    ? Math.min(canvasWidth, canvasHeight) - MOBILE_ROBOT_MARGIN * 2
+    : orbitR * (0.46 / 0.28)
   return {
     orbitR,
-    nodeR: orbitR * NODE_ORBIT_RATIO,
-    botSz: orbitR * (0.46 / 0.28),
+    nodeR:    orbitR * NODE_ORBIT_RATIO,
+    botSz,
+    isMobile: mobile,
   }
 }
 

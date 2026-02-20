@@ -15,4 +15,5 @@ export interface Layout {
   orbitR: number
   nodeR: number
   botSz: number
+  isMobile: boolean
 }
