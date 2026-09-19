@@ -12,8 +12,10 @@
     "preact-iso": "^2.12.2"
   },
   "devDependencies": {
-    "@preact/preset-vite": "^2.6.0",
+    "@preact/preset-vite": "^2.10.6",
+    "@tailwindcss/vite": "^4.3.3",
+    "tailwindcss": "^4.3.3",
     "typescript": "^5.2.2",
-    "vite": "^4.5.0"
+    "vite": "^6.4.3"
   }
 }
