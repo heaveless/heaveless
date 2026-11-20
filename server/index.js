@@ -12,10 +12,8 @@ app.disable('x-powered-by')
 const PORT = Number(process.env.PORT || 8787)
 const CLIENT_KEY = process.env.TIKTOK_CLIENT_KEY || ''
 const CLIENT_SECRET = process.env.TIKTOK_CLIENT_SECRET || ''
-const PUBLIC_ORIGIN = (process.env.PUBLIC_ORIGIN || '').replace(/\/$/, '')
-const REDIRECT_URI = process.env.TIKTOK_REDIRECT_URI || ''
-const SCOPES = process.env.TIKTOK_SCOPES || 'user.info.basic,user.info.profile'
-const FIELDS = process.env.TIKTOK_FIELDS || 'open_id,union_id,avatar_url,display_name,username,profile_deep_link'
+const SCOPES = 'user.info.basic,user.info.profile'
+const FIELDS = 'open_id,union_id,avatar_url,display_name,username,profile_deep_link'
 const BASIC_FIELDS = 'open_id,union_id,avatar_url,display_name'
 const SESSION_SECRET = process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex')
 const SESSION_COOKIE = 'hl_session'
@@ -35,13 +33,12 @@ if (!CLIENT_KEY || !CLIENT_SECRET) {
 }
 
 function requestOrigin(req) {
-  if (PUBLIC_ORIGIN) return PUBLIC_ORIGIN
   const host = req.get('host') || `localhost:${PORT}`
   return `${req.protocol}://${host}`
 }
 
 function redirectUri(req) {
-  return REDIRECT_URI || `${requestOrigin(req)}/api/auth/tiktok/callback`
+  return `${requestOrigin(req)}/api/auth/tiktok/callback`
 }
 
 function isSecure(req) {
@@ -242,5 +239,5 @@ if (fs.existsSync(path.join(dist, 'index.html'))) {
 
 app.listen(PORT, () => {
   console.log(`[server] listening on http://localhost:${PORT}`)
-  console.log(`[server] OAuth redirect URI: ${REDIRECT_URI || `${PUBLIC_ORIGIN || `http://localhost:${PORT}`}/api/auth/tiktok/callback`}`)
+  console.log('[server] OAuth callback path: /api/auth/tiktok/callback')
 })
