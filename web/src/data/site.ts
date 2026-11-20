@@ -1,4 +1,4 @@
-export type Route = '/' | '/live' | '/works' | '/contact' | '/terms' | '/privacy'
+export type Route = '/' | '/live' | '/event' | '/works' | '/contact' | '/terms' | '/privacy'
 
 export interface NavigationItem {
   label: string
@@ -7,13 +7,14 @@ export interface NavigationItem {
 }
 
 export const navigation: NavigationItem[] = [
-  { label: 'Live', route: '/live', index: '01' },
+  { label: 'Event', route: '/event', index: '01' },
   { label: 'Works', route: '/works', index: '02' },
   { label: 'Contact', route: '/contact', index: '03' },
 ]
 
 export const pageCopy = {
   '/live': { eyebrow: 'On air', title: 'Live', subtitle: 'Streaming on TikTok. Support the stream and see who keeps it alive.', accent: '01' },
+  '/event': { eyebrow: 'Event', title: 'Christmas', subtitle: 'A Christmas for every kid. Track the campaign, the plan and the people behind it.', accent: '01' },
   '/works': { eyebrow: 'Selected work', title: 'Works', subtitle: 'Companies, products and platforms I have worked with.', accent: '02' },
   '/contact': { eyebrow: 'Open channel', title: 'Contact', subtitle: 'For collaborations, ideas and good conversations.', accent: '03' },
   '/terms': { eyebrow: 'Legal', title: 'Terms', subtitle: 'The rules for using this site and supporting the stream.', accent: '04' },

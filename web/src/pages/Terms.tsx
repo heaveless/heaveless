@@ -9,7 +9,7 @@ export function TermsPage() {
       route="/terms"
       title="Terms of Service"
       updated="November 20, 2026"
-      intro="These terms govern your use of heaveless.com, the Live page and any donation made through it. By using the site you agree to them. If you do not agree, please do not use the site."
+      intro="These terms govern your use of heaveless.com, its event pages and any donation made through them. By using the site you agree to them. If you do not agree, please do not use the site."
     >
       <LegalSection number="01" title="Who we are">
         <p>heaveless is a personal website and live stream operated by an independent creator. You can reach the operator at {email}.</p>
@@ -56,7 +56,7 @@ export function TermsPage() {
       </LegalSection>
 
       <LegalSection number="08" title="Availability and disclaimers">
-        <p>The site and stream are provided as-is. We do not guarantee uninterrupted availability, error-free operation or a particular stream schedule. We may change, pause or discontinue any part of the site, including the Live page and donation flow.</p>
+        <p>The site and stream are provided as-is. We do not guarantee uninterrupted availability, error-free operation or a particular stream schedule. We may change, pause or discontinue any part of the site, including the event page and donation flow.</p>
         <p>Nothing on the site is financial, legal or tax advice.</p>
       </LegalSection>
 

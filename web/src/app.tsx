@@ -1,6 +1,7 @@
+import { useEffect } from 'preact/hooks'
 import { LocationProvider, Router, Route } from 'preact-iso'
 import { Hero } from './components/hero/Component'
-import { LivePage } from './pages/Live'
+import { EventPage } from './pages/Event'
 import { WorksPage } from './pages/Works'
 import { ContactPage } from './pages/Contact'
 import { TermsPage } from './pages/Terms'
@@ -8,10 +9,18 @@ import { PrivacyPage } from './pages/Privacy'
 import { NotFoundPage } from './pages/NotFound'
 import { ProjectPage } from './pages/Project'
 
+function LiveRedirect() {
+  useEffect(() => {
+    window.location.replace('/event')
+  }, [])
+  return null
+}
+
 export function App() {
   return <LocationProvider><Router>
     <Route path="/" component={Hero} />
-    <Route path="/live" component={LivePage} />
+    <Route path="/event" component={EventPage} />
+    <Route path="/live" component={LiveRedirect} />
     <Route path="/works" component={WorksPage} />
     <Route path="/works/metrica-global" component={() => <ProjectPage slug="metrica-global" />} />
     <Route path="/works/culqi" component={() => <ProjectPage slug="culqi" />} />
