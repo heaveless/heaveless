@@ -23,7 +23,10 @@ dist-ssr
 *.sln
 *.sw?
 
-# Local OpenCode tooling
-.agents/
-opencode.json
-skills-lock.json
+# Local Pi tooling
+.pi/skills/
+.pi/mcp.json
+
+# Local env
+.env
+server/.env

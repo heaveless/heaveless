@@ -1,5 +1,6 @@
 import { projects } from '../data/site'
 import { SiteHeader } from '../components/layout/SiteHeader'
+import { SiteFooter } from '../components/layout/SiteFooter'
 
 interface ProjectPageProps {
   slug: string
@@ -28,7 +29,7 @@ export function ProjectPage({ slug }: ProjectPageProps) {
         </section>
         <a className="mt-20 inline-flex bg-coral px-5 py-4 font-mono text-[10px] uppercase text-night no-underline transition-transform hover:-translate-y-1" href={project.href} target="_blank" rel="noreferrer">Visit company <span aria-hidden="true">↗</span></a>
       </main>
-      <footer className="mx-auto flex w-[calc(100%-40px)] justify-between gap-5 py-6 font-mono text-[9px] uppercase text-muted min-[768px]:w-[calc(100%-64px)] min-[1100px]:w-[920px] min-[768px]:text-[10px]"><span>heaveless / personal system</span><span>© {new Date().getFullYear()}</span></footer>
+      <SiteFooter className="w-[calc(100%-40px)] min-[768px]:w-[calc(100%-64px)] max-w-[920px]" />
     </div>
   )
 }

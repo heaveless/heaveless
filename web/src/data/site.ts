@@ -1,4 +1,4 @@
-export type Route = '/' | '/world' | '/works' | '/contact'
+export type Route = '/' | '/live' | '/works' | '/contact' | '/terms' | '/privacy'
 
 export interface NavigationItem {
   label: string
@@ -7,24 +7,18 @@ export interface NavigationItem {
 }
 
 export const navigation: NavigationItem[] = [
-  { label: 'World', route: '/world', index: '01' },
+  { label: 'Live', route: '/live', index: '01' },
   { label: 'Works', route: '/works', index: '02' },
   { label: 'Contact', route: '/contact', index: '03' },
 ]
 
 export const pageCopy = {
-  '/world': { eyebrow: 'Field notes', title: 'World', subtitle: 'Places that changed the way I look at things.', accent: '01' },
+  '/live': { eyebrow: 'On air', title: 'Live', subtitle: 'Streaming on TikTok. Support the stream and see who keeps it alive.', accent: '01' },
   '/works': { eyebrow: 'Selected work', title: 'Works', subtitle: 'Companies, products and platforms I have worked with.', accent: '02' },
   '/contact': { eyebrow: 'Open channel', title: 'Contact', subtitle: 'For collaborations, ideas and good conversations.', accent: '03' },
+  '/terms': { eyebrow: 'Legal', title: 'Terms', subtitle: 'The rules for using this site and supporting the stream.', accent: '04' },
+  '/privacy': { eyebrow: 'Legal', title: 'Privacy', subtitle: 'What we collect, why, and how to get rid of it.', accent: '05' },
 } as const
-
-export const places = [
-  { name: 'Tokyo', description: 'Neon streets and quiet temples.' },
-  { name: 'Reykjavik', description: 'Aurora skies and hot springs.' },
-  { name: 'Medellín', description: 'Eternal spring and a rising city.' },
-  { name: 'Tbilisi', description: 'Ancient wine and modern energy.' },
-  { name: 'Chiang Mai', description: 'Mountains, monks and mangoes.' },
-]
 
 export const projects = [
   { slug: 'metrica-global', name: 'Metrica Global', description: 'Technology consulting and digital transformation.', context: 'A global IT services company working across consulting, AI, staff augmentation, tailored solutions and managed services.', scope: 'IT consulting', category: 'Company', href: 'https://www.metrica-global.com/pe/' },
