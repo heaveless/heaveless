@@ -70,12 +70,22 @@ cloudflared tunnel --url http://localhost:8787
 
 ## 4. Production
 
+From the repository root:
+
 ```bash
-cd web && npm run build
-cd ../server && npm install && npm start
+npm run build
+npm start
 ```
 
-Set the three variables in the hosting provider. The server serves `web/dist` and the API on the same origin, so cookies are first-party. The custom domain must point to this service.
+On Railway:
+
+- **Root Directory:** repository root, not `web/` or `server/`.
+- **Build Command:** `npm run build`
+- **Start Command:** `npm start`
+- **Variables:** only the three above.
+- The custom domain must point to this service.
+
+`railway.toml` and `start.sh` are included for this setup. The server serves `web/dist` and the API on the same origin, so cookies are first-party.
 
 ## Endpoints
 
