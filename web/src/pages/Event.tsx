@@ -13,7 +13,6 @@ function daysToChristmas() {
 export function EventPage() {
   const { session, authNotice, login, logout } = useTikTokSession()
   const progress = Math.min(100, Math.round((event.raised / event.goal) * 100))
-  const remaining = Math.max(0, event.raised - event.spent)
   const days = daysToChristmas()
   const wall = session
     ? [{ name: session.name, avatar: session.avatar, you: true }, ...event.supporters]
@@ -98,67 +97,6 @@ export function EventPage() {
           </div>
         </section>
 
-        <section id="transparency" className="mt-16 scroll-mt-6" aria-labelledby="money-title">
-          <h2 id="money-title" className="m-0 text-[clamp(1.8rem,4vw,3rem)] tracking-[-.07em]">Where the money goes.</h2>
-          <p className="mt-2 mb-6 max-w-[52ch] leading-relaxed text-muted">Planned allocation. Every expense will be posted below with a receipt or note.</p>
-          <div className="grid gap-3 min-[640px]:grid-cols-3">
-            {event.allocation.map(item => (
-              <article className="flex min-h-[170px] flex-col justify-between bg-surface p-5" key={item.label}>
-                <div className="flex items-baseline justify-between font-mono text-[10px] uppercase">
-                  <span className="text-coral">{item.label}</span>
-                  <span className="text-muted">{item.percent}%</span>
-                </div>
-                <div>
-                  <p className="m-0 text-[clamp(1.4rem,3vw,1.9rem)] tracking-[-.05em]">{money(event.goal * item.percent / 100)}</p>
-                  <p className="mt-2 mb-0 text-sm leading-relaxed text-muted">{item.description}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-
-          <div className="mt-3 bg-surface p-5">
-            <div className="grid gap-4 min-[640px]:grid-cols-3">
-              <div>
-                <p className="m-0 font-mono text-[9px] uppercase tracking-[.1em] text-muted">Raised</p>
-                <p className="mt-2 mb-0 text-xl tracking-[-.04em]">{money(event.raised)}</p>
-              </div>
-              <div>
-                <p className="m-0 font-mono text-[9px] uppercase tracking-[.1em] text-muted">Spent</p>
-                <p className="mt-2 mb-0 text-xl tracking-[-.04em]">{money(event.spent)}</p>
-              </div>
-              <div>
-                <p className="m-0 font-mono text-[9px] uppercase tracking-[.1em] text-muted">Remaining</p>
-                <p className="mt-2 mb-0 text-xl tracking-[-.04em]">{money(remaining)}</p>
-              </div>
-            </div>
-            <p className="mt-4 mb-0 font-mono text-[9px] uppercase tracking-[.08em] text-muted">Updated {event.updated} · No expenses posted yet.</p>
-          </div>
-        </section>
-
-        <section className="mt-16" aria-labelledby="gifts-title">
-          <h2 id="gifts-title" className="m-0 text-[clamp(1.8rem,4vw,3rem)] tracking-[-.07em]">What your support buys.</h2>
-          <p className="mt-2 mb-6 max-w-[52ch] leading-relaxed text-muted">Concrete items, with a count and a target. Nothing is spent without being listed here.</p>
-          <div className="grid gap-3 min-[640px]:grid-cols-3">
-            {event.gifts.map(gift => {
-              const giftProgress = Math.min(100, Math.round((gift.funded / gift.target) * 100))
-              return (
-                <article className="flex min-h-[180px] flex-col justify-between bg-surface p-5" key={gift.name}>
-                  <div className="flex items-baseline justify-between">
-                    <p className="m-0 font-mono text-[10px] text-coral">{money(gift.unit)}</p>
-                    <p className="m-0 font-mono text-[9px] uppercase tracking-[.08em] text-muted">{gift.funded} / {gift.target}</p>
-                  </div>
-                  <div>
-                    <h3 className="m-0 text-[clamp(1.2rem,2.4vw,1.5rem)] tracking-[-.05em]">{gift.name}</h3>
-                    <div className="mt-3 h-1 w-full overflow-hidden bg-line">
-                      <div className="h-full bg-coral" style={{ width: `${giftProgress}%` }} />
-                    </div>
-                  </div>
-                </article>
-              )
-            })}
-          </div>
-        </section>
-
         <section className="mt-16" aria-labelledby="timeline-title">
           <h2 id="timeline-title" className="m-0 text-[clamp(1.8rem,4vw,3rem)] tracking-[-.07em]">The plan.</h2>
           <p className="mt-2 mb-6 max-w-[52ch] leading-relaxed text-muted">What happens, when it happens, and what gets published afterwards.</p>
@@ -204,7 +142,7 @@ export function EventPage() {
         </section>
 
         <p className="mt-16 border-t border-line pt-6 text-xs leading-relaxed text-muted">
-          This is a personal campaign, not a registered charity. All funds after payment processing fees go to the items above. Receipts and updates are posted on this page.
+          This is a personal campaign, not a registered charity. All funds after payment processing fees go to the campaign. Receipts and updates are posted on this page.
         </p>
       </div>
     </PageShell>
