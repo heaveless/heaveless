@@ -25,7 +25,7 @@ export function TermsPage() {
       </LegalSection>
 
       <LegalSection number="03" title="TikTok login">
-        <p>Some features, including donating and appearing on the supporters board, require signing in with TikTok. When you log in we receive the basic profile information described in our <a className={link} href="/privacy">Privacy Policy</a>: a TikTok user identifier, display name, username and avatar. We never receive your password.</p>
+        <p>Some features, including donating and appearing on the supporters board, require signing in with TikTok. When you log in we receive the basic profile information described in our <a className={link} href="/privacy">Privacy Policy</a>: a TikTok user identifier, display name and avatar. We never receive your password.</p>
         <p>Your use of TikTok is also governed by <a className={link} href="https://www.tiktok.com/legal/terms-of-service" target="_blank" rel="noreferrer">TikTok's terms of service</a>. You must be old enough to hold a TikTok account. To donate, you must be at least 18 or have permission from a parent or guardian.</p>
       </LegalSection>
 
@@ -40,7 +40,7 @@ export function TermsPage() {
       </LegalSection>
 
       <LegalSection number="05" title="Supporters and the board">
-        <p>If you donate and choose to be listed, your display name, username, avatar and support tier may be shown publicly on the site and mentioned on stream.</p>
+        <p>When you log in with TikTok, your display name and avatar may be shown publicly on the supporters board. If you donate, your support tier may also be shown and you may be mentioned on stream.</p>
         <p>You can ask us to correct or remove your entry at any time by writing to {email}. Removal from the board does not refund a donation. We may remove entries that impersonate someone, contain unlawful content or are otherwise inappropriate.</p>
       </LegalSection>
 

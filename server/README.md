@@ -8,14 +8,13 @@ Express server for the TikTok Login Kit flow. It also serves the static build fr
 2. Register this redirect URI exactly:
    - Production: `https://your-domain.com/api/auth/tiktok/callback`
    - Local tunnel: `https://your-tunnel.example/api/auth/tiktok/callback`
-3. Request the scopes:
-   - `user.info.basic` (avatar, display name)
-   - `user.info.profile` (username / handle)
+3. Request the scope:
+   - `user.info.basic` (display name and avatar)
 4. Add the legal URLs to the app:
    - Terms of Service: `https://your-domain.com/terms`
    - Privacy Policy: `https://your-domain.com/privacy`
 
-The server requests `user.info.basic` and `user.info.profile` by default. If `user.info.profile` is not approved, edit `SCOPES` and `FIELDS` in `server/index.js` and remove `username,profile_deep_link`. The UI falls back to the display name.
+The server requests `user.info.basic` only. The supporters board uses the TikTok display name and avatar; no username scope is requested.
 
 ## 2. Environment
 

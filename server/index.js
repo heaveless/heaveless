@@ -12,9 +12,8 @@ app.disable('x-powered-by')
 const PORT = Number(process.env.PORT || 8787)
 const CLIENT_KEY = process.env.TIKTOK_CLIENT_KEY || ''
 const CLIENT_SECRET = process.env.TIKTOK_CLIENT_SECRET || ''
-const SCOPES = 'user.info.basic,user.info.profile'
-const FIELDS = 'open_id,union_id,avatar_url,display_name,username,profile_deep_link'
-const BASIC_FIELDS = 'open_id,union_id,avatar_url,display_name'
+const SCOPES = 'user.info.basic'
+const FIELDS = 'open_id,union_id,avatar_url,display_name'
 const SESSION_SECRET = process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex')
 const SESSION_COOKIE = 'hl_session'
 const STATE_COOKIE = 'hl_oauth_state'
@@ -195,16 +194,14 @@ app.get('/api/auth/tiktok/callback', async (req, res) => {
     }
 
     const user = await fetchTikTokUser(token.access_token, FIELDS)
-      ?? await fetchTikTokUser(token.access_token, BASIC_FIELDS)
     if (!user) throw new Error('TikTok user info unavailable')
 
-    const username = typeof user.username === 'string' ? user.username.trim().replace(/^@/, '') : ''
     const displayName = typeof user.display_name === 'string' ? user.display_name.trim() : ''
     const avatar = user.avatar_url || user.avatar_url_100 || user.avatar_large_url || ''
 
     setSession(req, res, {
-      name: displayName || username || 'TikTok user',
-      handle: username ? `@${username}` : '',
+      name: displayName || 'TikTok user',
+      handle: '',
       avatar,
     })
 

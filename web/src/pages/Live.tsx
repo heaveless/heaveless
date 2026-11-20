@@ -49,7 +49,6 @@ export function LivePage() {
   const [session, setSession] = useState<LiveSession | null>(null)
   const [authNotice, setAuthNotice] = useState('')
   const [board, setBoard] = useState<Supporter[]>(supporters)
-  const [completed, setCompleted] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -76,6 +75,29 @@ export function LivePage() {
     }
   }, [])
 
+  useEffect(() => {
+    if (!session) {
+      setBoard(supporters)
+      return
+    }
+    setBoard(current => {
+      const existing = current.some(item => item.you)
+      if (existing) {
+        return current.map(item => item.you
+          ? { ...item, name: session.name, handle: session.handle || undefined, avatar: session.avatar }
+          : item)
+      }
+      return [{
+        name: session.name,
+        handle: session.handle || undefined,
+        tier: 'supporter',
+        since: 'Just now',
+        avatar: session.avatar,
+        you: true,
+      }, ...current]
+    })
+  }, [session])
+
   const startTikTokLogin = () => {
     window.location.assign('/api/auth/tiktok/start')
   }
@@ -87,21 +109,12 @@ export function LivePage() {
       // Clear the local state even if the request fails.
     }
     setSession(null)
-    setCompleted(false)
     setBoard(supporters)
   }
 
   const handleCompleted = () => {
-    if (!session || completed) return
-    setBoard(current => [...current, {
-      name: session.name,
-      handle: session.handle || undefined,
-      tier: 'supporter',
-      since: 'Just now',
-      avatar: session.avatar,
-      you: true,
-    }])
-    setCompleted(true)
+    if (!session) return
+    setBoard(current => current.map(item => item.you ? { ...item, tier: 'builder' } : item))
   }
 
   return (

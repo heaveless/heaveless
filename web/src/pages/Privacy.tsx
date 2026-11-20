@@ -18,8 +18,8 @@ export function PrivacyPage() {
 
       <LegalSection number="02" title="What we collect">
         <LegalList items={[
-          <>TikTok login data, only if you choose to log in: a TikTok user identifier, display name, username, avatar and profile link. We do not receive your password.</>,
-          <>Donation data: amount, currency, reference, message or description, payment status and the name or username you want shown on the board. Full card or bank details are handled by the payment provider and are not stored by us.</>,
+          <>TikTok login data, only if you choose to log in: a TikTok user identifier, display name and avatar. We do not receive your password.</>,
+          <>Donation data: amount, currency, reference, message or description, payment status and the display name associated with your TikTok account if you appear on the board. Full card or bank details are handled by the payment provider and are not stored by us.</>,
           <>Technical data: essential cookies, IP address and basic request logs used to operate and protect the site.</>,
           <>Messages you send us by email.</>,
         ]} />
@@ -27,7 +27,7 @@ export function PrivacyPage() {
       </LegalSection>
 
       <LegalSection number="03" title="How we use it">
-        <p>We use this information to authenticate you with TikTok, keep you logged in, process and confirm donations, maintain the supporters board, mention supporters on stream, respond to messages, prevent fraud and abuse, troubleshoot the site and comply with legal obligations.</p>
+        <p>We use this information to authenticate you with TikTok, keep you logged in, show your display name and avatar on the supporters board, process and confirm donations, mention supporters on stream, respond to messages, prevent fraud and abuse, troubleshoot the site and comply with legal obligations.</p>
         <p>Where data protection law requires a legal basis, we rely on performance of a contract or steps you ask for (login and donation), our legitimate interests in operating and securing the site, your consent for the public display of your supporter entry, and legal obligations.</p>
       </LegalSection>
 

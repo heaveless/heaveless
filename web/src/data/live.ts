@@ -63,10 +63,5 @@ export const loginCopy = {
   authMissing: 'TikTok login is not configured yet.',
 }
 
-/** Mock board for preview. Replace with real supporters once payments go live. */
-export const supporters: Supporter[] = [
-  { name: 'Camila R.', handle: '@camilar', tier: 'founder', since: 'Nov 2026', avatar: '/mock/supporter-2.jpg' },
-  { name: 'Andrés M.', handle: '@andresm', tier: 'founder', since: 'Nov 2026', avatar: '/mock/supporter-3.jpg' },
-  { name: 'Valeria S.', handle: '@valerias', tier: 'builder', since: 'Nov 2026', avatar: '/mock/supporter-4.jpg' },
-  { name: 'Mateo C.', handle: '@mateoc', tier: 'supporter', since: 'Nov 2026', avatar: '/mock/supporter-1.jpg' },
-]
+/** Add confirmed supporters here if you want them visible before logging in. */
+export const supporters: Supporter[] = []
