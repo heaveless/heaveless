@@ -6,12 +6,12 @@ export interface SessionUser {
   avatar: string
 }
 
-const AUTH_ERROR = 'TikTok login failed. Try again.'
-const AUTH_MISSING = 'TikTok login is not configured yet.'
+/** The page owns the wording, so both languages can translate the notice. */
+export type AuthNotice = 'error' | 'missing' | ''
 
 export function useTikTokSession() {
   const [session, setSession] = useState<SessionUser | null>(null)
-  const [authNotice, setAuthNotice] = useState('')
+  const [authNotice, setAuthNotice] = useState<AuthNotice>('')
 
   useEffect(() => {
     let cancelled = false
@@ -29,8 +29,8 @@ export function useTikTokSession() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const auth = params.get('auth')
-    if (auth === 'error') setAuthNotice(AUTH_ERROR)
-    if (auth === 'missing') setAuthNotice(AUTH_MISSING)
+    if (auth === 'error') setAuthNotice('error')
+    if (auth === 'missing') setAuthNotice('missing')
     if (auth) {
       params.delete('auth')
       const query = params.toString()

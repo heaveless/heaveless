@@ -1,5 +1,6 @@
 import robotImage from '../../assets/robot.png'
 import { navigation } from '../../data/site'
+import { SnowflakeIcon } from '../icons/Snowflake'
 import { SiteHeader } from '../layout/SiteHeader'
 
 export function Hero() {
@@ -11,7 +12,15 @@ export function Hero() {
           <p className="mb-[23px] flex items-center gap-3 font-mono text-[10px] uppercase tracking-[.14em] text-muted"><span className="text-coral">00</span>Personal world / 2026</p>
           <h1 id="hero-title" className="mb-[25px] max-w-[680px] text-[clamp(3.2rem,16vw,5rem)] font-bold leading-[.94] tracking-[-.085em] min-[768px]:text-[clamp(3.2rem,7vw,7.3rem)]">Build a world<br /><em className="not-italic text-coral">worth visiting.</em></h1>
           <p className="mb-[37px] max-w-[330px] text-sm leading-relaxed text-muted min-[768px]:text-base">A living archive of ideas, experiments and conversations.</p>
-          <a className="inline-flex items-center gap-[18px] border border-coral px-[17px] py-[13px] font-mono text-[11px] uppercase text-white transition-[background-color,color,translate] hover:-translate-y-0.5 hover:bg-coral hover:text-night" href="/works">See the work <span aria-hidden="true">↗</span></a>
+          <div className="flex flex-wrap items-center gap-3">
+            <a className="inline-flex items-center gap-[18px] border border-coral px-[17px] py-[13px] font-mono text-[11px] uppercase text-white transition-[background-color,color,translate] hover:-translate-y-0.5 hover:bg-coral hover:text-night" href="/works">See the work <span aria-hidden="true">↗</span></a>
+            {/* The event is a separate skin. One entry point keeps its lime and its snowflake, nothing else. */}
+            <a className="group inline-flex items-center gap-[10px] border border-lime/60 px-[15px] py-[13px] font-mono text-[11px] uppercase text-lime transition-[background-color,color,translate,border-color] hover:-translate-y-0.5 hover:border-lime hover:bg-lime hover:text-night" href="/event">
+              <SnowflakeIcon className="size-3.5 transition-transform duration-700 group-hover:rotate-90" />
+              Christmas 2026
+              <span aria-hidden="true">↗</span>
+            </a>
+          </div>
         </section>
         <section className="relative grid min-h-[350px] place-items-center min-[768px]:min-h-[min(700px,calc(100dvh-120px))]" aria-label="Explore the site">
           <div className="absolute aspect-square w-[71%] rotate-[-17deg] rounded-full border border-line" aria-hidden="true" />

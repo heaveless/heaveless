@@ -11,7 +11,10 @@ import { ProjectPage } from './pages/Project'
 
 function LiveRedirect() {
   useEffect(() => {
-    window.location.replace('/event')
+    // /live is only an alias now. Carry the query through so the TikTok
+    // callback's ?auth= error or missing notice is not dropped on the way.
+    const { search, hash } = window.location
+    window.location.replace(`/event${search}${hash}`)
   }, [])
   return null
 }
