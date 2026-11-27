@@ -101,7 +101,6 @@ export const en: EventCopy = {
     logOut: 'Log out',
     signedIn: 'Signed in',
     authError: 'TikTok login failed. Try again.',
-    authMissing: 'TikTok login is not configured yet.',
   },
   footer: {
     greeting: 'Merry Christmas',

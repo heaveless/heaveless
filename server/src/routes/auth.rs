@@ -35,10 +35,6 @@ fn failure(state: &AppState, reason: &str) -> Response {
 }
 
 pub async fn start(State(state): State<AppState>) -> Response {
-    if !state.config.configured_for_tiktok() {
-        return failure(&state, "missing");
-    }
-
     let value = session::token();
     let secret = &state.config.session_secret;
     let cookie = cookies::build(
@@ -64,10 +60,6 @@ pub async fn callback(
     let secret = &state.config.session_secret;
     let expected_state = cookies::read_signed(&headers, STATE_COOKIE, secret);
     let cleared = cookies::removal(STATE_COOKIE, state.config.cookie_secure);
-
-    if !state.config.configured_for_tiktok() {
-        return with_cookies(failure(&state, "missing"), &[cleared]);
-    }
 
     if let Some(error) = params.get("error") {
         tracing::warn!(error, description = params.get("error_description"), "tiktok authorize returned an error");

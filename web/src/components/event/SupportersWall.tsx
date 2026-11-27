@@ -17,7 +17,7 @@ interface SupportersWallProps extends LoginPanelProps {
   supporters: Supporter[]
 }
 
-const NOTICE_KEY = { error: 'authError', missing: 'authMissing' } as const
+const NOTICE_KEY = { error: 'authError' } as const
 
 function Avatar({ src, name }: { src?: string; name: string }) {
   const [failed, setFailed] = useState(false)

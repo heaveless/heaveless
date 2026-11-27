@@ -42,7 +42,7 @@ export function LivePage() {
   const [flowOpen, setFlowOpen] = useState(false)
   const [board, setBoard] = useState<Supporter[]>(supporters)
   const { session, authNotice, login, logout } = useTikTokSession()
-  const notice = authNotice === 'error' ? loginCopy.authError : authNotice === 'missing' ? loginCopy.authMissing : ''
+  const notice = authNotice === 'error' ? loginCopy.authError : ''
 
   useEffect(() => {
     if (!session) {

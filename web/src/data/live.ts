@@ -35,7 +35,6 @@ export const loginCopy = {
   bodySecondary: 'Scan the QR. Keep the stream alive.',
   note: 'Secure login. No posting.',
   authError: 'TikTok login failed. Try again.',
-  authMissing: 'TikTok login is not configured yet.',
 }
 
 export const supporters: Supporter[] = []

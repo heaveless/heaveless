@@ -101,7 +101,6 @@ export const es: EventCopy = {
     logOut: 'Salir',
     signedIn: 'Con sesión',
     authError: 'El inicio de sesión con TikTok falló. Inténtalo de nuevo.',
-    authMissing: 'El inicio de sesión con TikTok aún no está configurado.',
   },
   footer: {
     greeting: 'Feliz Navidad',

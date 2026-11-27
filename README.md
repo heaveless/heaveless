@@ -21,12 +21,13 @@ cd server && cp .env.example .env && cargo run
 cd web && cp .env.example .env && npm install && npm run dev
 ```
 
-Vite proxies `/api` to `http://localhost:8080`, so the dev flow works without `VITE_API_URL`.
-In production `VITE_API_URL` points at the API origin.
+Both services read every value from the environment and refuse to start without it: the API exits
+with the missing variable, and the web build fails if `VITE_API_URL` is absent. No defaults, no
+silent fallbacks.
 
 ## Deploy
 
-1. `web`: root directory `web`, build `npm ci && npm run build`, start `npm start`, env `VITE_API_URL`.
+1. `web`: root directory `web`, build `npm ci && npm run build`, start `npm start`, env `VITE_API_URL` and `PORT` (Railway injects it).
 2. `server`: root directory `server`, Dockerfile build, env in `server/README.md`.
 3. Add the Postgres plugin to the API service and set `DATABASE_URL`.
 

@@ -1,4 +1,8 @@
-use anyhow::{Context, Result};
+use std::fmt::Display;
+use std::str::FromStr;
+
+use anyhow::{anyhow, bail, Context, Result};
+use url::Url;
 
 use crate::tiktok::TikTokConfig;
 
@@ -13,33 +17,58 @@ pub struct Config {
     pub tiktok: TikTokConfig,
 }
 
+fn required(name: &str) -> Result<String> {
+    let value = std::env::var(name).with_context(|| format!("{name} is required"))?;
+
+    if value.trim().is_empty() {
+        bail!("{name} is empty");
+    }
+
+    Ok(value)
+}
+
+fn parsed<T>(name: &str) -> Result<T>
+where
+    T: FromStr,
+    T::Err: Display,
+{
+    let value = required(name)?;
+    value
+        .parse()
+        .map_err(|error| anyhow!("{name} is not valid: {error}"))
+}
+
+fn origin(name: &str) -> Result<String> {
+    let value = required(name)?;
+    let url = Url::parse(&value).with_context(|| format!("{name} is not a URL: {value}"))?;
+
+    if !matches!(url.scheme(), "http" | "https") || url.path() != "/" || url.query().is_some() {
+        bail!("{name} must be a bare origin, for example https://heaveless.com");
+    }
+
+    Ok(value.trim_end_matches('/').to_string())
+}
+
 impl Config {
     pub fn from_env() -> Result<Self> {
-        let database_url = std::env::var("DATABASE_URL").context("DATABASE_URL is required")?;
-        let session_secret = std::env::var("SESSION_SECRET").context("SESSION_SECRET is required")?;
-        let public_url = std::env::var("PUBLIC_URL").unwrap_or_else(|_| "http://localhost:8080".into());
-        let web_origin = std::env::var("WEB_ORIGIN").unwrap_or_else(|_| "http://localhost:5173".into());
+        let public_url = origin("PUBLIC_URL")?;
 
         Ok(Self {
-            port: std::env::var("PORT").ok().and_then(|value| value.parse().ok()).unwrap_or(8080),
-            session_ttl_days: std::env::var("SESSION_TTL_DAYS").ok().and_then(|value| value.parse().ok()).unwrap_or(7),
+            port: parsed("PORT")?,
+            session_ttl_days: parsed("SESSION_TTL_DAYS")?,
             cookie_secure: public_url.starts_with("https://"),
-            database_url,
-            session_secret,
-            web_origin,
+            database_url: required("DATABASE_URL")?,
+            session_secret: required("SESSION_SECRET")?,
+            web_origin: origin("WEB_ORIGIN")?,
             public_url,
             tiktok: TikTokConfig {
-                client_key: std::env::var("TIKTOK_CLIENT_KEY").unwrap_or_default(),
-                client_secret: std::env::var("TIKTOK_CLIENT_SECRET").unwrap_or_default(),
+                client_key: required("TIKTOK_CLIENT_KEY")?,
+                client_secret: required("TIKTOK_CLIENT_SECRET")?,
             },
         })
     }
 
     pub fn callback_url(&self) -> String {
-        format!("{}/api/auth/tiktok/callback", self.public_url.trim_end_matches('/'))
-    }
-
-    pub fn configured_for_tiktok(&self) -> bool {
-        self.tiktok.is_configured()
+        format!("{}/api/auth/tiktok/callback", self.public_url)
     }
 }

@@ -13,10 +13,6 @@ pub struct TikTokConfig {
 }
 
 impl TikTokConfig {
-    pub fn is_configured(&self) -> bool {
-        !self.client_key.is_empty() && !self.client_secret.is_empty()
-    }
-
     pub fn authorize_url(&self, redirect_uri: &str, state: &str) -> String {
         format!(
             "{AUTHORIZE_URL}?client_key={}&scope={SCOPE}&response_type=code&redirect_uri={}&state={}",

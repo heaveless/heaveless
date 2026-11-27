@@ -16,6 +16,7 @@ Rust (Axum) service for the TikTok login and the supporters wall. Postgres holds
 ## Environment
 
 ```env
+PORT=8080
 DATABASE_URL=postgres://...
 SESSION_SECRET=openssl rand -hex 32
 PUBLIC_URL=https://api.heaveless.com
@@ -24,6 +25,9 @@ TIKTOK_CLIENT_KEY=...
 TIKTOK_CLIENT_SECRET=...
 SESSION_TTL_DAYS=7
 ```
+
+Every variable is required: the service exits at boot naming the one that is missing or malformed.
+`PUBLIC_URL` and `WEB_ORIGIN` must be bare origins, with no path, or the boot fails too.
 
 `PUBLIC_URL` builds the `redirect_uri` TikTok must have on file: `<PUBLIC_URL>/api/auth/tiktok/callback`.
 `WEB_ORIGIN` is the only origin allowed by CORS and the place the callback sends the browser back to.

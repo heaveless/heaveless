@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'preact/hooks'
 import { tiktokAuth, type SessionUser } from './api'
 
-export type AuthNotice = 'error' | 'missing' | ''
+export type AuthNotice = 'error' | ''
 
-const NOTICES: Record<string, AuthNotice> = { error: 'error', missing: 'missing' }
+const NOTICES: Record<string, AuthNotice> = { error: 'error' }
 
 function noticeFromUrl(): AuthNotice {
   const params = new URLSearchParams(window.location.search)

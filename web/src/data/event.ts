@@ -39,7 +39,6 @@ export interface EventCopy {
     logOut: string
     signedIn: string
     authError: string
-    authMissing: string
   }
   footer: {
     greeting: string
