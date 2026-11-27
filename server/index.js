@@ -18,6 +18,9 @@ const SESSION_SECRET = process.env.SESSION_SECRET || crypto.randomBytes(32).toSt
 const SESSION_COOKIE = 'hl_session'
 const STATE_COOKIE = 'hl_oauth_state'
 const SESSION_TTL = 7 * 24 * 60 * 60 * 1000
+// Where the login flow lands. The wall is the only place with a login button,
+// so the callback returns the reader to it. /live stays as a forwarded alias.
+const RETURN_TO = '/event#wall'
 const STATE_TTL = 10 * 60 * 1000
 
 const TOKEN_URL = 'https://open.tiktokapis.com/v2/oauth/token/'
@@ -143,7 +146,7 @@ app.get('/api/auth/session', (req, res) => {
 
 app.get('/api/auth/tiktok/start', (req, res) => {
   if (!CLIENT_KEY || !CLIENT_SECRET) {
-    return res.redirect(`${requestOrigin(req)}/live?auth=missing`)
+    return res.redirect(`${requestOrigin(req)}/event?auth=missing`)
   }
 
   const state = crypto.randomBytes(24).toString('hex')
@@ -169,11 +172,16 @@ app.get('/api/auth/tiktok/callback', async (req, res) => {
   const oauthError = typeof req.query.error === 'string' ? req.query.error : ''
 
   if (!CLIENT_KEY || !CLIENT_SECRET) {
-    return res.redirect(`${requestOrigin(req)}/live?auth=missing`)
+    return res.redirect(`${requestOrigin(req)}/event?auth=missing`)
+  }
+
+  if (oauthError) {
+    const description = typeof req.query.error_description === 'string' ? req.query.error_description : ''
+    console.warn('[auth] TikTok authorize returned:', oauthError, description)
   }
 
   if (oauthError || !code || !state || !expectedState || !safeEqual(state, expectedState)) {
-    return res.redirect(`${requestOrigin(req)}/live?auth=error`)
+    return res.redirect(`${requestOrigin(req)}/event?auth=error`)
   }
 
   try {
@@ -205,10 +213,10 @@ app.get('/api/auth/tiktok/callback', async (req, res) => {
       avatar,
     })
 
-    res.redirect(`${requestOrigin(req)}/live`)
+    res.redirect(`${requestOrigin(req)}${RETURN_TO}`)
   } catch (error) {
     console.error('[auth] TikTok callback failed:', error instanceof Error ? error.message : error)
-    res.redirect(`${requestOrigin(req)}/live?auth=error`)
+    res.redirect(`${requestOrigin(req)}/event?auth=error`)
   }
 })
 

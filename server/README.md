@@ -89,7 +89,7 @@ On Railway:
 ## Endpoints
 
 - `GET /api/auth/tiktok/start` — sets the OAuth state cookie and redirects to TikTok.
-- `GET /api/auth/tiktok/callback` — verifies state, exchanges the code server-side, reads the user, sets the session cookie and redirects to `/live`.
+- `GET /api/auth/tiktok/callback` — verifies state, exchanges the code server-side, reads the user, sets the session cookie and redirects to `/event#wall`. `/live` is still routed as an alias that forwards to `/event`.
 - `GET /api/auth/session` — returns the current user or `null`.
 - `POST /api/auth/logout` — clears the session cookie.
 - `GET /api/health` — health check.
