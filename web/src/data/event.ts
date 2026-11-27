@@ -87,7 +87,7 @@ const en: EventCopy = {
     eyebrow: 'Christmas Eve 2026',
     headline: { lead: 'One night,', accent: 'a name each.' },
     intro:
-      'On December 24 the kids in the families I work with in Arequipa get a wrapped gift with their name on the tag and a full table for the night.',
+      'On December 24, in Arequipa, the kids on the list get a wrapped gift with their name on the tag and a full table for the night.',
     seePlan: 'See the plan',
   },
   raised: {
@@ -113,7 +113,7 @@ const en: EventCopy = {
     steps: [
       {
         title: 'The list is written down',
-        body: 'The names come from families in the neighborhoods I already work with. The list is written down before anything is bought, and the donations decide how far down it reaches.',
+        body: 'I write it myself before anything is bought. There is no organization behind it, and the donations decide how far down it reaches.',
       },
       {
         title: 'The box opens',
@@ -153,7 +153,7 @@ const en: EventCopy = {
     heading: 'Why the names.',
     paragraphs: [
       'Growing up I thought Christmas was about the box. It was not. It was the second someone realized the box had their name on it.',
-      'This year the list is open ended. I write down the families I already know in Arequipa, and what we raise decides how far down that list I get.',
+      'This year the list is open ended. It starts with families in Arequipa that I pick myself, and what we raise decides how far down it I get.',
       'Every receipt ends up on this page, not as decoration but as a record. If you give, you will be able to check exactly where the money went.',
       'If you read only one line, let it be this one: thank you for being here. The rest is just dates.',
     ],
@@ -205,7 +205,7 @@ const es: EventCopy = {
     eyebrow: 'Nochebuena 2026',
     headline: { lead: 'Una noche,', accent: 'cada nombre.' },
     intro:
-      'El 24 de diciembre los niños de las familias con las que trabajo en Arequipa reciben un regalo envuelto con su nombre en la etiqueta y una mesa completa para esa noche.',
+      'El 24 de diciembre, en Arequipa, los niños de la lista reciben un regalo envuelto con su nombre en la etiqueta y una mesa completa para esa noche.',
     seePlan: 'Ver el plan',
   },
   raised: {
@@ -231,7 +231,7 @@ const es: EventCopy = {
     steps: [
       {
         title: 'La lista se escribe',
-        body: 'Los nombres vienen de familias de los barrios donde ya trabajo. La lista se escribe antes de comprar nada, y las donaciones deciden hasta dónde llega.',
+        body: 'La escribo yo antes de comprar nada. Detrás no hay ninguna organización, y las donaciones deciden hasta dónde llega.',
       },
       {
         title: 'Se abre la caja',
@@ -271,7 +271,7 @@ const es: EventCopy = {
     heading: 'Por qué los nombres.',
     paragraphs: [
       'De niño pensaba que la Navidad era la caja. No lo era. Era el segundo en que alguien se daba cuenta de que la caja tenía su nombre.',
-      'Este año la lista está abierta. Escribo a las familias que ya conozco en Arequipa, y lo que reunamos decide hasta dónde bajo en esa lista.',
+      'Este año la lista está abierta. Empieza con familias de Arequipa que elijo yo, y lo que reunamos decide hasta dónde bajo en ella.',
       'Cada comprobante termina en esta página, no como decoración sino como un registro. Si aportas, vas a poder ver exactamente a dónde fue el dinero.',
       'Si vas a leer una sola línea, que sea esta: gracias por estar aquí. El resto son solo fechas.',
     ],
