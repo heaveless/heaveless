@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'preact/hooks'
-import { GiftMark, SnowflakeMark } from './Marks'
+import { GiftMark, GlobeMark, SnowflakeMark } from './Marks'
 import { donationOpen, giveHref, giveLinkProps, giveShortLabel } from './campaign'
 import { useLang } from './lang'
 
@@ -12,6 +12,9 @@ import { useLang } from './lang'
 export function EventHeader() {
   const { lang, setLang, t } = useLang()
   const [onPaper, setOnPaper] = useState(false)
+  // At the very top the header has no surface of its own: the opening field
+  // starts behind it, so the two read as one pine sheet instead of a band.
+  const [atTop, setAtTop] = useState(true)
   const headerRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
@@ -30,6 +33,7 @@ export function EventHeader() {
       const edge = footerEdge?.getBoundingClientRect().height ?? 0
       const footerReached = footer ? footer.getBoundingClientRect().top + edge <= height : false
       setOnPaper(paperReached && !footerReached)
+      setAtTop(window.scrollY <= 6)
     }
     const onScroll = () => {
       if (!frame) frame = window.requestAnimationFrame(update)
@@ -56,7 +60,11 @@ export function EventHeader() {
     <header
       ref={headerRef}
       className={`sticky top-0 z-40 transition-colors duration-500 ${
-        onPaper ? 'bg-paper/95 text-forest shadow-[0_1px_0_rgb(8_46_34_/_0.10)] backdrop-blur-xl' : 'bg-pine-800/90 backdrop-blur-md'
+        onPaper
+          ? 'bg-paper/95 text-forest shadow-[0_1px_0_rgb(8_46_34_/_0.10)] backdrop-blur-xl'
+          : atTop
+            ? 'bg-transparent'
+            : 'bg-pine-800/95 backdrop-blur-md'
       }`}
     >
       <a
@@ -97,8 +105,8 @@ export function EventHeader() {
           {links.map(link => (
             <a key={link.href} href={link.href} className="group flex min-h-11 items-center no-underline">
               <span
-                className={`text-[12.5px] font-medium transition-colors ${
-                  onPaper ? 'text-forest/72 group-hover:text-forest' : 'text-paper/70 group-hover:text-paper'
+                className={`font-display text-[13px] font-bold tracking-[-.015em] transition-colors ${
+                  onPaper ? 'text-forest/78 group-hover:text-forest' : 'text-paper/75 group-hover:text-paper'
                 }`}
               >
                 {link.label}
@@ -112,13 +120,14 @@ export function EventHeader() {
             type="button"
             onClick={() => setLang(lang === 'en' ? 'es' : 'en')}
             aria-label={t.lang.switchTo}
-            className={`inline-flex min-h-11 shrink-0 cursor-pointer items-center px-1 text-[11px] font-semibold underline underline-offset-4 transition-colors ${
+            title={t.lang.target}
+            className={`grid size-11 shrink-0 cursor-pointer place-items-center rounded-full transition-colors ${
               onPaper
-                ? 'text-forest/70 decoration-forest/25 hover:text-forest hover:decoration-forest/70'
-                : 'text-paper/70 decoration-paper/25 hover:text-paper hover:decoration-paper/70'
+                ? 'text-forest/70 hover:bg-forest/[.06] hover:text-forest'
+                : 'text-paper/70 hover:bg-paper/10 hover:text-paper'
             }`}
           >
-            {t.lang.target}
+            <GlobeMark className="size-[18px]" />
           </button>
 
           {donationOpen && (

@@ -184,11 +184,11 @@
   border: 1px solid rgb(251 248 238 / .14);
 }
 
-/* Paper surface: cards on the snow field. */
+/* Paper surface: cards on the snow field. Flat, hairline edge, no shadow. */
 .paper-card {
   background: #fffdf5;
   border: 1px solid rgb(8 46 34 / .10);
-  box-shadow: 0 26px 50px -42px rgb(8 46 34 / .6);
+  box-shadow: none;
 }
 
 .lime-tag {
@@ -237,16 +237,6 @@
   to { transform: translate3d(0, 0, 0); }
 }
 
-@keyframes glow {
-  0%, 100% { opacity: .55; transform: scale(1); }
-  50% { opacity: .9; transform: scale(1.04); }
-}
-
-@keyframes twinkle {
-  0%, 100% { opacity: .25; transform: scale(.84); }
-  50% { opacity: 1; transform: scale(1.06); }
-}
-
 /* One-time entrance. Text uses the transform-only variant so the headline is
    painted at full opacity on the first frame. */
 .rise {
@@ -255,18 +245,6 @@
 
 .rise-soft {
   animation: rise-soft .7s cubic-bezier(.22, .8, .2, 1) both;
-}
-
-.twinkle {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: twinkle 4.5s ease-in-out infinite;
-}
-
-.glow {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: glow 9s ease-in-out infinite;
 }
 
 
@@ -285,9 +263,7 @@
   }
 
   .rise,
-  .rise-soft,
-  .twinkle,
-  .glow {
+  .rise-soft {
     animation: none;
   }
 }

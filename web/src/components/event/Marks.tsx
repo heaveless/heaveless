@@ -96,3 +96,24 @@ export function ArrowMark({ className }: MarkProps) {
     </svg>
   )
 }
+
+/** Globe for the language switch, which is an icon and not a label. */
+export function GlobeMark({ className }: MarkProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.6"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="12" cy="12" r="8.6" />
+      <path d="M3.4 12h17.2" />
+      <path d="M12 3.4c2.35 2.3 3.65 5.3 3.65 8.6S14.35 18.3 12 20.6c-2.35-2.3-3.65-5.3-3.65-8.6S9.65 5.7 12 3.4z" />
+    </svg>
+  )
+}

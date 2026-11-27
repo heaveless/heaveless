@@ -50,16 +50,22 @@ export function money(lang: Lang, value: number) {
   }
 }
 
-/** The opening date is the figure while donations are closed. */
-export const donationOpensMonthDay = (lang: Lang) =>
+/** Whole days until donations open, counted in Lima so the badge never lies. */
+export const daysUntilOpening = (today = limaToday()) => {
+  const opening = new Intl.DateTimeFormat('en-CA', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    timeZone: LIMA,
+  }).format(new Date(event.donationOpensIso))
+  return Math.round((Date.parse(opening) - Date.parse(today)) / 86_400_000)
+}
+
+/** The opening date as one label, for the line under the figure. */
+export const donationOpensLabel = (lang: Lang) =>
   new Date(event.donationOpensIso).toLocaleDateString(locale(lang), {
     day: 'numeric',
     month: 'long',
-    timeZone: LIMA,
-  })
-
-export const donationOpensYear = (lang: Lang) =>
-  new Date(event.donationOpensIso).toLocaleDateString(locale(lang), {
     year: 'numeric',
     timeZone: LIMA,
   })

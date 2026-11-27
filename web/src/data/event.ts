@@ -12,8 +12,8 @@ export interface EventCopy {
   city: string
   header: { home: string; sections: string; skip: string; label: string }
   nav: { plan: string; gifts: string; note: string; wall: string }
-  hero: { eyebrow: string; headline: { lead: string; accent: string }; intro: string; seePlan: string; read: string }
-  raised: { kicker: string; live: string; opens: string; opensNote: string }
+  hero: { eyebrow: string; headline: { lead: string; accent: string }; intro: string; seePlan: string }
+  raised: { kicker: string; live: string; opensNote: string; closed: (date: string) => string; opensIn: (days: number) => string }
   countdown: {
     title: string
     days: string
@@ -87,15 +87,15 @@ const en: EventCopy = {
     eyebrow: 'Christmas Eve 2026',
     headline: { lead: 'One night,', accent: 'a name each.' },
     intro:
-      'On December 24 the kids in the families I already work with in Arequipa get a wrapped gift with their name on the tag and a full table for the night. I buy it, wrap it and hand it over myself.',
+      'On December 24 the kids in the families I work with in Arequipa get a wrapped gift with their name on the tag and a full table for the night.',
     seePlan: 'See the plan',
-    read: 'Read the note',
   },
   raised: {
     kicker: 'Raised so far',
     live: 'Updated by hand as the donations arrive.',
-    opens: 'Donations open',
     opensNote: 'The list is already written.',
+    closed: date => `Donations open ${date}.`,
+    opensIn: days => (days === 1 ? 'Opens tomorrow' : `Opens in ${days} days`),
   },
   countdown: {
     title: 'Countdown to the 24th',
@@ -205,15 +205,15 @@ const es: EventCopy = {
     eyebrow: 'Nochebuena 2026',
     headline: { lead: 'Una noche,', accent: 'cada nombre.' },
     intro:
-      'El 24 de diciembre los niños de las familias con las que ya trabajo en Arequipa reciben un regalo envuelto con su nombre en la etiqueta y una mesa completa para esa noche. Yo lo compro, lo envuelvo y lo entrego.',
+      'El 24 de diciembre los niños de las familias con las que trabajo en Arequipa reciben un regalo envuelto con su nombre en la etiqueta y una mesa completa para esa noche.',
     seePlan: 'Ver el plan',
-    read: 'Leer la nota',
   },
   raised: {
     kicker: 'Recaudado hasta hoy',
     live: 'Actualizado a mano a medida que llegan las donaciones.',
-    opens: 'Las donaciones abren',
     opensNote: 'La lista ya está escrita.',
+    closed: date => `Las donaciones abren el ${date}.`,
+    opensIn: days => (days === 1 ? 'Abre mañana' : `Abre en ${days} días`),
   },
   countdown: {
     title: 'Cuenta regresiva al 24',

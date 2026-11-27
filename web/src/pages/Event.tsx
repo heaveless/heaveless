@@ -100,7 +100,7 @@ function EventBody() {
         <div className="relative bg-paper text-forest" id="paper-start">
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 bottom-full h-[104px] min-[768px]:h-[146px]"
+            className="pointer-events-none absolute inset-x-0 bottom-[calc(100%-1px)] h-[104px] min-[768px]:h-[146px]"
           >
             <SnowDrift className="absolute inset-x-0 bottom-0 h-full w-full text-paper" />
             <PineTree className="absolute bottom-[12%] left-[5%] h-9 w-6 text-pine-700 min-[768px]:left-[7%] min-[768px]:h-14 min-[768px]:w-9" />
