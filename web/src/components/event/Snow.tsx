@@ -1,12 +1,9 @@
 import { useMemo } from 'preact/hooks'
-import type { JSX } from 'preact'
 
 interface MarkProps {
   className?: string
   id?: string
 }
-
-const vars = (input: Record<string, string>): JSX.CSSProperties => input as unknown as JSX.CSSProperties
 
 export function Snowfall({ count = 44 }: { count?: number }) {
   const flakes = useMemo(
@@ -36,7 +33,7 @@ export function Snowfall({ count = 44 }: { count?: number }) {
         <span
           key={index}
           className="snowflake"
-          style={vars({
+          style={{
             '--x': `${flake.left.toFixed(2)}%`,
             '--s': `${flake.size.toFixed(2)}px`,
             '--dur': `${flake.duration.toFixed(2)}s`,
@@ -44,7 +41,7 @@ export function Snowfall({ count = 44 }: { count?: number }) {
             '--drift': `${flake.drift.toFixed(1)}px`,
             '--o': flake.opacity.toFixed(2),
             filter: flake.soft ? 'blur(1px)' : 'none',
-          })}
+          }}
         />
       ))}
     </div>
