@@ -2,10 +2,6 @@ interface IconProps {
   className?: string
 }
 
-/**
- * Six arm snowflake. Shared: the event pages use it as their wordmark glyph and
- * the home page uses it on the Christmas teaser. Decorative, always aria-hidden.
- */
 export function SnowflakeIcon({ className }: IconProps) {
   return (
     <svg

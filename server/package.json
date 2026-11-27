@@ -9,6 +9,8 @@
     "start": "node index.js"
   },
   "dependencies": {
+    "cookie": "^2.0.2",
+    "cookie-signature": "^1.2.2",
     "express": "^4.22.3"
   }
 }

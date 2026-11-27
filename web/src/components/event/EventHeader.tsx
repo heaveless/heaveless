@@ -1,53 +1,12 @@
-import { useEffect, useRef, useState } from 'preact/hooks'
+import { clsx } from 'clsx'
 import { GiftMark, GlobeMark, SnowflakeMark } from './Marks'
 import { donationOpen, giveHref, giveLinkProps, giveShortLabel } from './campaign'
 import { useLang } from './lang'
+import { useHeaderSurface } from './useHeaderSurface'
 
-/**
- * The header belongs to the whole page: pine while it sits on the opening
- * field, paper once the snow field reaches it, and pine again over the closing
- * footer. No second bar, no jump: the same row changes surface as the page
- * changes surface.
- */
 export function EventHeader() {
   const { lang, setLang, t } = useLang()
-  const [onPaper, setOnPaper] = useState(false)
-  // At the very top the header has no surface of its own: the opening field
-  // starts behind it, so the two read as one pine sheet instead of a band.
-  const [atTop, setAtTop] = useState(true)
-  const headerRef = useRef<HTMLElement>(null)
-
-  useEffect(() => {
-    const paper = document.getElementById('paper-start')
-    const footer = document.getElementById('event-footer')
-    const footerEdge = document.getElementById('footer-edge')
-    if (!paper) return
-
-    let frame = 0
-    const update = () => {
-      frame = 0
-      const height = headerRef.current?.offsetHeight ?? 72
-      const paperReached = paper.getBoundingClientRect().top <= height
-      // The footer opens with a paper edge hanging into it: stay on paper until
-      // that edge has scrolled past the header and pine is really under it.
-      const edge = footerEdge?.getBoundingClientRect().height ?? 0
-      const footerReached = footer ? footer.getBoundingClientRect().top + edge <= height : false
-      setOnPaper(paperReached && !footerReached)
-      setAtTop(window.scrollY <= 6)
-    }
-    const onScroll = () => {
-      if (!frame) frame = window.requestAnimationFrame(update)
-    }
-
-    update()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll)
-    return () => {
-      if (frame) window.cancelAnimationFrame(frame)
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onScroll)
-    }
-  }, [])
+  const { ref, onPaper, atTop } = useHeaderSurface<HTMLElement>()
 
   const links = [
     { label: t.nav.plan, href: '#plan' },
@@ -58,14 +17,15 @@ export function EventHeader() {
 
   return (
     <header
-      ref={headerRef}
-      className={`sticky top-0 z-40 transition-colors duration-500 ${
+      ref={ref}
+      className={clsx(
+        'sticky top-0 z-40 transition-colors duration-500',
         onPaper
           ? 'bg-paper/95 text-forest shadow-[0_1px_0_rgb(8_46_34_/_0.10)] backdrop-blur-xl'
           : atTop
             ? 'bg-transparent'
-            : 'bg-pine-800/95 backdrop-blur-md'
-      }`}
+            : 'bg-pine-800/95 backdrop-blur-md',
+      )}
     >
       <a
         href="#main-content"
@@ -75,26 +35,27 @@ export function EventHeader() {
       </a>
 
       <div className="mx-auto flex h-[66px] max-w-[1200px] items-center gap-2 px-4 min-[420px]:gap-3 min-[420px]:px-5 min-[768px]:h-[80px] min-[768px]:gap-6 min-[768px]:px-8">
-        <a
-          href="/event"
-          aria-label={t.header.home}
-          className="group inline-flex min-h-11 min-w-0 items-center gap-2.5 no-underline"
-        >
+        <a href="/event" aria-label={t.header.home} className="group inline-flex min-h-11 min-w-0 items-center gap-2.5 no-underline">
           <SnowflakeMark
-            className={`size-5 shrink-0 transition-colors duration-500 ${onPaper ? 'text-pine-700' : 'text-lime'} group-hover:rotate-45 motion-reduce:group-hover:rotate-0`}
+            className={clsx(
+              'size-5 shrink-0 transition-colors duration-500 group-hover:rotate-45 motion-reduce:group-hover:rotate-0',
+              onPaper ? 'text-pine-700' : 'text-lime',
+            )}
           />
           <span className="min-w-0">
             <span
-              className={`block truncate text-[1.08rem] font-semibold leading-none tracking-[-.015em] transition-colors duration-500 ${
-                onPaper ? 'text-forest' : 'text-paper'
-              }`}
+              className={clsx(
+                'block truncate text-[1.08rem] font-semibold leading-none tracking-[-.015em] transition-colors duration-500',
+                onPaper ? 'text-forest' : 'text-paper',
+              )}
             >
               heaveless
             </span>
             <span
-              className={`mt-1 block truncate text-[9px] font-bold uppercase leading-none tracking-[.22em] transition-colors duration-500 ${
-                onPaper ? 'text-forest/65' : 'text-paper/60'
-              }`}
+              className={clsx(
+                'mt-1 block truncate text-[9px] font-bold uppercase leading-none tracking-[.22em] transition-colors duration-500',
+                onPaper ? 'text-forest/65' : 'text-paper/60',
+              )}
             >
               {t.header.label}
             </span>
@@ -105,9 +66,10 @@ export function EventHeader() {
           {links.map(link => (
             <a key={link.href} href={link.href} className="group flex min-h-11 items-center no-underline">
               <span
-                className={`font-display text-[13px] font-bold tracking-[-.015em] transition-colors ${
-                  onPaper ? 'text-forest/78 group-hover:text-forest' : 'text-paper/75 group-hover:text-paper'
-                }`}
+                className={clsx(
+                  'font-display text-[13px] font-bold tracking-[-.015em] transition-colors',
+                  onPaper ? 'text-forest/78 group-hover:text-forest' : 'text-paper/75 group-hover:text-paper',
+                )}
               >
                 {link.label}
               </span>
@@ -121,11 +83,12 @@ export function EventHeader() {
             onClick={() => setLang(lang === 'en' ? 'es' : 'en')}
             aria-label={t.lang.switchTo}
             title={t.lang.target}
-            className={`grid size-11 shrink-0 cursor-pointer place-items-center rounded-full transition-colors ${
+            className={clsx(
+              'grid size-11 shrink-0 cursor-pointer place-items-center rounded-full transition-colors',
               onPaper
                 ? 'text-forest/70 hover:bg-forest/[.06] hover:text-forest'
-                : 'text-paper/70 hover:bg-paper/10 hover:text-paper'
-            }`}
+                : 'text-paper/70 hover:bg-paper/10 hover:text-paper',
+            )}
           >
             <GlobeMark className="size-[18px]" />
           </button>

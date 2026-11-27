@@ -59,7 +59,7 @@ Fonts are self-hosted in `web/public/fonts` (OFL, latin subset) and only fetched
 ## Isolation rules
 
 1. `/event` must not use `PageShell`, `SiteHeader` or `SiteFooter`. It owns `EventHeader` and `EventFooter`.
-2. Event tokens, the `event-*`, `snow*`, `pine-card`, `paper-card` and `lime-tag` classes and `web/src/components/event/*` never leave the event route. One exception, written down so it does not grow: the Christmas teaser next to "See the work" on `/` may use `--color-lime` and the shared `components/icons/Snowflake` glyph. No event class, font or surface crosses over.
+2. Event tokens, the `event-*`, `snow*`, `pine-card` and `paper-card` classes and `web/src/components/event/*` never leave the event route. One exception, written down so it does not grow: the Christmas teaser next to "See the work" on `/` may use `--color-lime` and the shared `components/icons/Snowflake` glyph. No event class, font or surface crosses over.
 3. The rest of the site never adopts the pine/paper palette, Bricolage or Instrument Sans.
 4. Route-level metadata: `EventPage` sets `color-scheme: dark`, the body background `#041d15`, the document title and `theme-color`, and restores all four on unmount.
 5. The header listener and the snow layer are cleaned up on unmount. The snow layer is fixed, `aria-hidden`, `pointer-events: none`, sits below the sticky header and is `display: none` under reduced motion.

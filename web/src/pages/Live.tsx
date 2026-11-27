@@ -1,15 +1,9 @@
 import { useEffect, useState } from 'preact/hooks'
 import { PageShell } from '../components/layout/PageShell'
 import { DonationFlow } from '../components/live/DonationFlow'
-import { TikTokLoginButton } from '../components/live/TikTokLoginButton'
-import {
-  liveStatus,
-  loginCopy,
-  supporters,
-  type LiveSession,
-  type Supporter,
-  type SupporterTier,
-} from '../data/live'
+import { TikTokLoginButton } from '../components/auth/TikTokLoginButton'
+import { liveStatus, loginCopy, supporters, type Supporter, type SupporterTier } from '../data/live'
+import { useTikTokSession } from '../lib/useTikTokSession'
 
 const tierLabel: Record<SupporterTier, string> = {
   founder: 'Founder',
@@ -46,34 +40,9 @@ function SupporterRow({ supporter, rank }: { supporter: Supporter; rank: number 
 
 export function LivePage() {
   const [flowOpen, setFlowOpen] = useState(false)
-  const [session, setSession] = useState<LiveSession | null>(null)
-  const [authNotice, setAuthNotice] = useState('')
   const [board, setBoard] = useState<Supporter[]>(supporters)
-
-  useEffect(() => {
-    let cancelled = false
-    fetch('/api/auth/session', { credentials: 'same-origin' })
-      .then(response => response.ok ? response.json() : null)
-      .then(data => {
-        if (!cancelled) setSession(data?.user ?? null)
-      })
-      .catch(() => {
-        // The login button still works; the API may not be running yet.
-      })
-    return () => { cancelled = true }
-  }, [])
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const auth = params.get('auth')
-    if (auth === 'error') setAuthNotice(loginCopy.authError)
-    if (auth === 'missing') setAuthNotice(loginCopy.authMissing)
-    if (auth) {
-      params.delete('auth')
-      const query = params.toString()
-      window.history.replaceState({}, '', `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`)
-    }
-  }, [])
+  const { session, authNotice, login, logout } = useTikTokSession()
+  const notice = authNotice === 'error' ? loginCopy.authError : authNotice === 'missing' ? loginCopy.authMissing : ''
 
   useEffect(() => {
     if (!session) {
@@ -81,36 +50,24 @@ export function LivePage() {
       return
     }
     setBoard(current => {
-      const existing = current.some(item => item.you)
-      if (existing) {
-        return current.map(item => item.you
-          ? { ...item, name: session.name, handle: session.handle || undefined, avatar: session.avatar }
-          : item)
+      if (current.some(item => item.you)) {
+        return current.map(item =>
+          item.you ? { ...item, name: session.name, handle: session.handle || undefined, avatar: session.avatar } : item,
+        )
       }
-      return [{
-        name: session.name,
-        handle: session.handle || undefined,
-        tier: 'supporter',
-        since: 'Just now',
-        avatar: session.avatar,
-        you: true,
-      }, ...current]
+      return [
+        {
+          name: session.name,
+          handle: session.handle || undefined,
+          tier: 'supporter',
+          since: 'Just now',
+          avatar: session.avatar,
+          you: true,
+        },
+        ...current,
+      ]
     })
   }, [session])
-
-  const startTikTokLogin = () => {
-    window.location.assign('/api/auth/tiktok/start')
-  }
-
-  const signOut = async () => {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' })
-    } catch {
-      // Clear the local state even if the request fails.
-    }
-    setSession(null)
-    setBoard(supporters)
-  }
 
   const handleCompleted = () => {
     if (!session) return
@@ -122,7 +79,7 @@ export function LivePage() {
       <DonationFlow
         open={flowOpen}
         session={session}
-        onLogin={startTikTokLogin}
+        onLogin={login}
         onCompleted={handleCompleted}
         onClose={() => setFlowOpen(false)}
       />
@@ -149,7 +106,7 @@ export function LivePage() {
                 </button>
                 <button
                   type="button"
-                  onClick={signOut}
+                  onClick={logout}
                   aria-label={session.handle ? `Log out of ${session.handle}` : 'Log out'}
                   className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 border border-line px-3 font-mono text-[9px] uppercase tracking-[.1em] text-muted transition-colors hover:border-coral hover:text-ink min-[640px]:hidden"
                 >
@@ -161,7 +118,7 @@ export function LivePage() {
                   <span className="font-mono text-[9px] tracking-[.1em] text-muted">{session.handle || session.name}</span>
                   <button
                     type="button"
-                    onClick={signOut}
+                    onClick={logout}
                     className="cursor-pointer font-mono text-[9px] uppercase tracking-[.1em] text-muted underline decoration-line underline-offset-4 transition-colors hover:text-ink"
                   >
                     Log out
@@ -170,9 +127,9 @@ export function LivePage() {
               </div>
             ) : (
               <div className="flex flex-col gap-3 min-[640px]:items-end">
-                <TikTokLoginButton onClick={startTikTokLogin} />
+                <TikTokLoginButton onClick={login} />
                 <p className="m-0 font-mono text-[9px] uppercase tracking-[.08em] text-muted min-[640px]:text-right">{loginCopy.note}</p>
-                {authNotice && <p className="m-0 font-mono text-[9px] uppercase tracking-[.08em] text-coral min-[640px]:text-right" role="status">{authNotice}</p>}
+                {notice && <p className="m-0 font-mono text-[9px] uppercase tracking-[.08em] text-coral min-[640px]:text-right" role="status">{notice}</p>}
               </div>
             )}
           </div>

@@ -8,7 +8,6 @@ export interface LangState {
   t: EventCopy
 }
 
-/** The event page is the only bilingual surface on the site. */
 export const LangContext = createContext<LangState>({
   lang: 'en',
   setLang: () => {},
@@ -19,18 +18,16 @@ export const useLang = () => useContext(LangContext)
 
 const STORAGE_KEY = 'heaveless-event-lang'
 
-export const storedLang = (): Lang => {
+const storage = () => {
   try {
-    return window.localStorage.getItem(STORAGE_KEY) === 'es' ? 'es' : 'en'
+    return window.localStorage
   } catch {
-    return 'en'
+    return null
   }
 }
 
+export const storedLang = (): Lang => (storage()?.getItem(STORAGE_KEY) === 'es' ? 'es' : 'en')
+
 export const rememberLang = (lang: Lang) => {
-  try {
-    window.localStorage.setItem(STORAGE_KEY, lang)
-  } catch {
-    /* private mode: the switch still works for this visit */
-  }
+  storage()?.setItem(STORAGE_KEY, lang)
 }

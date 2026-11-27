@@ -7,7 +7,6 @@ import { SiteFooter } from './SiteFooter'
 interface PageShellProps {
   route: Exclude<Route, '/'>
   children: ComponentChildren
-  /** Skip the page title block. Used by pages that open with their own hero. */
   bare?: boolean
 }
 

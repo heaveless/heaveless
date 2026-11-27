@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'preact/hooks'
 import { toDataURL } from 'qrcode'
 import { donationPresets, payment, type LiveSession } from '../../data/live'
-import { TikTokLoginButton } from './TikTokLoginButton'
+import { TikTokLoginButton } from '../auth/TikTokLoginButton'
 
 type Step = 'login' | 'amount' | 'pay' | 'done'
 
@@ -63,7 +63,6 @@ export function DonationFlow({ open, session, initialAmount, onLogin, onComplete
     setQr('')
     setError('')
     panelRef.current?.focus()
-    // session is read when the flow opens on purpose; logging in later must not reset it.
   }, [open, initialAmount])
 
   useEffect(() => {

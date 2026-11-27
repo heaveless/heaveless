@@ -1,55 +1,44 @@
 import { useEffect, useState } from 'preact/hooks'
+import { tiktokAuth, type SessionUser } from './api'
 
-export interface SessionUser {
-  name: string
-  handle: string
-  avatar: string
-}
-
-/** The page owns the wording, so both languages can translate the notice. */
 export type AuthNotice = 'error' | 'missing' | ''
+
+const NOTICES: Record<string, AuthNotice> = { error: 'error', missing: 'missing' }
+
+function noticeFromUrl(): AuthNotice {
+  const params = new URLSearchParams(window.location.search)
+  const notice = NOTICES[params.get('auth') ?? ''] ?? ''
+  if (params.has('auth')) {
+    params.delete('auth')
+    const query = params.toString()
+    const next = `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`
+    window.history.replaceState({}, '', next)
+  }
+  return notice
+}
 
 export function useTikTokSession() {
   const [session, setSession] = useState<SessionUser | null>(null)
   const [authNotice, setAuthNotice] = useState<AuthNotice>('')
 
   useEffect(() => {
-    let cancelled = false
-    fetch('/api/auth/session', { credentials: 'same-origin' })
-      .then(response => response.ok ? response.json() : null)
-      .then(data => {
-        if (!cancelled) setSession(data?.user ?? null)
-      })
-      .catch(() => {
-        // The login button still works; the API may not be running yet.
-      })
-    return () => { cancelled = true }
+    setAuthNotice(noticeFromUrl())
   }, [])
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const auth = params.get('auth')
-    if (auth === 'error') setAuthNotice('error')
-    if (auth === 'missing') setAuthNotice('missing')
-    if (auth) {
-      params.delete('auth')
-      const query = params.toString()
-      window.history.replaceState({}, '', `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`)
+    let active = true
+    void tiktokAuth.session().then(data => {
+      if (active) setSession(data?.user ?? null)
+    })
+    return () => {
+      active = false
     }
   }, [])
 
-  const login = () => {
-    window.location.assign('/api/auth/tiktok/start')
-  }
-
   const logout = async () => {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' })
-    } catch {
-      // Clear the local session even if the request fails.
-    }
+    await tiktokAuth.logout()
     setSession(null)
   }
 
-  return { session, authNotice, login, logout }
+  return { session, authNotice, login: tiktokAuth.start, logout }
 }

@@ -3,11 +3,6 @@ import { SnowHang } from './Snow'
 import { contactHref } from './campaign'
 import { useLang } from './lang'
 
-/**
- * The back cover: one line of sign-off, the anchors, the small print. It opens
- * with the paper edge of the snow field hanging into it, so the page closes on
- * the same silhouette it used at the opening.
- */
 export function EventFooter() {
   const { t } = useLang()
 

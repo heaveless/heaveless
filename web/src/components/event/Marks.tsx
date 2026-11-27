@@ -2,20 +2,8 @@ interface MarkProps {
   className?: string
 }
 
-/** Four point sparkle. */
-export function SparkleMark({ className }: MarkProps) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 0c.7 6.4 5.6 11.3 12 12-6.4.7-11.3 5.6-12 12-.7-6.4-5.6-11.3-12-12C6.4 11.3 11.3 6.4 12 0z" />
-    </svg>
-  )
-}
-
-/* The snowflake is shared: /event uses it as the wordmark glyph and the home
-   page uses it on the Christmas teaser. */
 export { SnowflakeIcon as SnowflakeMark } from '../icons/Snowflake'
 
-/** Wrapped present, line style. */
 export function GiftMark({ className }: MarkProps) {
   return (
     <svg
@@ -36,7 +24,6 @@ export function GiftMark({ className }: MarkProps) {
   )
 }
 
-/** Basket for the table. */
 export function BasketMark({ className }: MarkProps) {
   return (
     <svg
@@ -56,7 +43,6 @@ export function BasketMark({ className }: MarkProps) {
   )
 }
 
-/** Candle for the night itself. */
 export function CandleMark({ className }: MarkProps) {
   return (
     <svg
@@ -78,7 +64,6 @@ export function CandleMark({ className }: MarkProps) {
   )
 }
 
-/** Arrow for inline links. */
 export function ArrowMark({ className }: MarkProps) {
   return (
     <svg
@@ -97,7 +82,6 @@ export function ArrowMark({ className }: MarkProps) {
   )
 }
 
-/** Globe for the language switch, which is an icon and not a label. */
 export function GlobeMark({ className }: MarkProps) {
   return (
     <svg

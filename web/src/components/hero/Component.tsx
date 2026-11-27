@@ -14,7 +14,6 @@ export function Hero() {
           <p className="mb-[37px] max-w-[330px] text-sm leading-relaxed text-muted min-[768px]:text-base">A living archive of ideas, experiments and conversations.</p>
           <div className="flex flex-wrap items-center gap-3">
             <a className="inline-flex items-center gap-[18px] border border-coral px-[17px] py-[13px] font-mono text-[11px] uppercase text-white transition-[background-color,color,translate] hover:-translate-y-0.5 hover:bg-coral hover:text-night" href="/works">See the work <span aria-hidden="true">↗</span></a>
-            {/* The event is a separate skin. One entry point keeps its lime and its snowflake, nothing else. */}
             <a className="group inline-flex items-center gap-[10px] border border-lime/60 px-[15px] py-[13px] font-mono text-[11px] uppercase text-lime transition-[background-color,color,translate,border-color] hover:-translate-y-0.5 hover:border-lime hover:bg-lime hover:text-night" href="/event">
               <SnowflakeIcon className="size-3.5 transition-transform duration-700 group-hover:rotate-90" />
               Christmas 2026

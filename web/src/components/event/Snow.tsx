@@ -8,11 +8,6 @@ interface MarkProps {
 
 const vars = (input: Record<string, string>): JSX.CSSProperties => input as unknown as JSX.CSSProperties
 
-/**
- * One fixed snow layer for the whole page. Every flake carries a thin pine ring
- * so it reads on the paper field as well as on the pine sections. Deterministic
- * values, so the field never re-shuffles between renders.
- */
 export function Snowfall({ count = 44 }: { count?: number }) {
   const flakes = useMemo(
     () =>
@@ -56,7 +51,6 @@ export function Snowfall({ count = 44 }: { count?: number }) {
   )
 }
 
-/** The paper edge rising into the dark frame. Sits above the light block. */
 export function SnowDrift({ className }: MarkProps) {
   return (
     <svg
@@ -72,7 +66,6 @@ export function SnowDrift({ className }: MarkProps) {
   )
 }
 
-/** The paper edge hanging into the dark ask section. */
 export function SnowHang({ className, id }: MarkProps) {
   return (
     <svg
@@ -89,7 +82,6 @@ export function SnowHang({ className, id }: MarkProps) {
   )
 }
 
-/** Small filled pine, used along the snow banks. */
 export function PineTree({ className }: MarkProps) {
   return (
     <svg viewBox="0 0 24 32" className={className} fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">

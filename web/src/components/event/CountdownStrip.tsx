@@ -6,11 +6,6 @@ import { useLang } from './lang'
 const CHRISTMAS_EVE = new Date(`${event.deliveryDate}T23:59:59-05:00`).getTime()
 const pad = (value: number) => String(value).padStart(2, '0')
 
-/**
- * The countdown is printed on the paper, right under the snow line: four
- * numbers sitting in the open, no rail and no dividers, on the same surface as
- * the page. Space does the separating.
- */
 export function CountdownStrip() {
   const { lang, t } = useLang()
   const { days, hours, minutes, seconds, done } = useCountdown(CHRISTMAS_EVE)

@@ -1,7 +1,5 @@
 @import "tailwindcss";
 
-/* Event-only faces. Declared here so the browser only fetches them when the
-   event page renders them. Self-hosted, SIL Open Font License. */
 @font-face {
   font-family: "Bricolage Grotesque";
   font-style: normal;
@@ -40,7 +38,7 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", "DejaVu Sans Mono", monospace;
   --animate-float: float 7s ease-in-out infinite;
 
-  /* Event identity: pine dusk, a paper snow field, one lime light. /event only. */
+  
   --color-pine-950: #041d15;
   --color-pine-900: #06281c;
   --color-pine-800: #0a3826;
@@ -122,12 +120,6 @@
   }
 }
 
-/* -------------------------------------------------------------------------
-   Event page (/event) only
-   One pine field at dusk, a long snow drift, a paper page, a pine night again.
-   The rest of the site stays night + coral.
-   ---------------------------------------------------------------------- */
-
 .event-page {
   background-color: var(--color-pine-800);
   color: var(--color-paper);
@@ -142,16 +134,12 @@
 }
 
 .event-page :focus-visible {
-  /* Two-tone ring: the pine outline reads on paper, the lime halo reads on
-     pine. One page, two surfaces, one focus indicator. */
+  
   outline: 2px solid var(--color-pine-950);
   outline-offset: 2px;
   box-shadow: 0 0 0 5px rgb(223 244 95 / .85);
 }
 
-/* The plan is one rail. Below 900px the four beats stack, so the rail turns
-   vertical: a short segment in the gap above each date puts it back on the
-   line, never over the copy. */
 @media (max-width: 899px) {
   .plan-step::before {
     content: "";
@@ -178,26 +166,17 @@
   letter-spacing: .01em;
 }
 
-/* Deep pine surface: the login card inside the paper field. */
 .pine-card {
   background: linear-gradient(158deg, #0d4431 0%, #082f22 100%);
   border: 1px solid rgb(251 248 238 / .14);
 }
 
-/* Paper surface: cards on the snow field. Flat, hairline edge, no shadow. */
 .paper-card {
   background: #fffdf5;
   border: 1px solid rgb(8 46 34 / .10);
   box-shadow: none;
 }
 
-.lime-tag {
-  background: linear-gradient(152deg, #eefb9c 0%, #d3ec4a 58%, #c2de33 100%);
-  color: var(--color-pine-950);
-}
-
-/* Snow, fixed over the whole page. One layer, both zones: a white flake with a
-   soft pine halo, so it reads on paper as well as on pine. */
 .snowfall {
   position: fixed;
   z-index: 30;
@@ -237,8 +216,6 @@
   to { transform: translate3d(0, 0, 0); }
 }
 
-/* One-time entrance. Text uses the transform-only variant so the headline is
-   painted at full opacity on the first frame. */
 .rise {
   animation: rise .7s cubic-bezier(.22, .8, .2, 1) both;
 }
@@ -246,7 +223,6 @@
 .rise-soft {
   animation: rise-soft .7s cubic-bezier(.22, .8, .2, 1) both;
 }
-
 
 @media (prefers-reduced-motion: reduce) {
   *,
