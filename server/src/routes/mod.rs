@@ -46,6 +46,7 @@ pub fn router(state: AppState) -> Router {
             "/api/whatsapp/webhook",
             get(whatsapp::verify).post(whatsapp::receive),
         )
+        .route("/api/whatsapp/send", post(whatsapp::send))
         .layer(cors)
         .layer(TraceLayer::new_for_http())
         .with_state(state)

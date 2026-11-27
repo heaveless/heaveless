@@ -23,6 +23,14 @@ pub struct WhatsAppConfig {
     pub verify_token: Option<String>,
     /// When set, POST payloads must carry a matching X-Hub-Signature-256.
     pub app_secret: Option<String>,
+    /// System user token used to send messages; unset disables /api/whatsapp/send.
+    pub access_token: Option<String>,
+    /// The business phone number id messages are sent from.
+    pub phone_number_id: Option<String>,
+    /// Shared secret callers present as `Authorization: Bearer ...`.
+    pub send_secret: Option<String>,
+    /// Graph API version, for example `v23.0`.
+    pub graph_version: String,
 }
 
 fn optional(name: &str) -> Option<String> {
@@ -83,6 +91,10 @@ impl Config {
             whatsapp: WhatsAppConfig {
                 verify_token: optional("WHATSAPP_VERIFY_TOKEN"),
                 app_secret: optional("WHATSAPP_APP_SECRET"),
+                access_token: optional("WHATSAPP_ACCESS_TOKEN"),
+                phone_number_id: optional("WHATSAPP_PHONE_NUMBER_ID"),
+                send_secret: optional("WHATSAPP_SEND_SECRET"),
+                graph_version: optional("WHATSAPP_GRAPH_VERSION").unwrap_or_else(|| "v23.0".to_string()),
             },
         })
     }

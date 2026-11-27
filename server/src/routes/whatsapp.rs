@@ -1,15 +1,24 @@
+use std::sync::OnceLock;
+
 use axum::body::Bytes;
 use axum::extract::{Query, State};
-use axum::http::{HeaderMap, StatusCode};
+use axum::http::{header, HeaderMap, StatusCode};
 use axum::response::{IntoResponse, Response};
+use axum::Json;
 use hmac::{Hmac, Mac};
+use reqwest::Client;
 use serde::Deserialize;
-use serde_json::Value;
+use serde_json::{json, Value};
 use sha2::Sha256;
 
 use super::AppState;
 
 const SIGNATURE_PREFIX: &str = "sha256=";
+
+fn http() -> &'static Client {
+    static CLIENT: OnceLock<Client> = OnceLock::new();
+    CLIENT.get_or_init(Client::new)
+}
 
 #[derive(Deserialize)]
 pub struct ChallengeQuery {
@@ -72,6 +81,144 @@ pub async fn receive(State(state): State<AppState>, headers: HeaderMap, body: By
 
     log_events(&payload);
     (StatusCode::OK, "EVENT_RECEIVED").into_response()
+}
+
+/// POST /api/whatsapp/send
+///
+/// Sends a text or template message through the Cloud API. Callers authorise
+/// with `Authorization: Bearer $WHATSAPP_SEND_SECRET`, so the endpoint stays
+/// closed even though the API itself is public.
+pub async fn send(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+    Json(request): Json<SendRequest>,
+) -> Response {
+    let config = &state.config.whatsapp;
+
+    let Some(secret) = config.send_secret.as_deref() else {
+        tracing::warn!("whatsapp send called but WHATSAPP_SEND_SECRET is not set");
+        return StatusCode::SERVICE_UNAVAILABLE.into_response();
+    };
+
+    let authorized = headers
+        .get(header::AUTHORIZATION)
+        .and_then(|value| value.to_str().ok())
+        .and_then(|value| value.strip_prefix("Bearer "))
+        .is_some_and(|token| constant_time_eq(token.trim(), secret));
+
+    if !authorized {
+        tracing::warn!("whatsapp send rejected: bad or missing bearer token");
+        return StatusCode::UNAUTHORIZED.into_response();
+    }
+
+    let (Some(access_token), Some(phone_number_id)) =
+        (config.access_token.as_deref(), config.phone_number_id.as_deref())
+    else {
+        tracing::warn!("whatsapp send called without WHATSAPP_ACCESS_TOKEN or WHATSAPP_PHONE_NUMBER_ID");
+        return StatusCode::SERVICE_UNAVAILABLE.into_response();
+    };
+
+    let payload = request.payload();
+    let url = format!(
+        "https://graph.facebook.com/{}/{phone_number_id}/messages",
+        config.graph_version
+    );
+
+    match http()
+        .post(url)
+        .bearer_auth(access_token)
+        .json(&payload)
+        .send()
+        .await
+    {
+        Ok(response) => {
+            let status = response.status();
+            let body: Value = response
+                .json()
+                .await
+                .unwrap_or_else(|_| json!({ "error": "graph returned a non-JSON body" }));
+
+            if status.is_success() {
+                tracing::info!(status = status.as_u16(), "whatsapp message accepted");
+                (StatusCode::OK, Json(body)).into_response()
+            } else {
+                tracing::warn!(status = status.as_u16(), %body, "whatsapp send rejected");
+                (StatusCode::BAD_GATEWAY, Json(body)).into_response()
+            }
+        }
+        Err(error) => {
+            tracing::error!(%error, "whatsapp send request failed");
+            (
+                StatusCode::BAD_GATEWAY,
+                Json(json!({ "error": "graph request failed" })),
+            )
+                .into_response()
+        }
+    }
+}
+
+#[derive(Deserialize)]
+#[serde(tag = "type", rename_all = "snake_case")]
+pub enum SendRequest {
+    Text {
+        to: String,
+        body: String,
+        #[serde(default)]
+        preview_url: bool,
+    },
+    Template {
+        to: String,
+        name: String,
+        #[serde(default = "default_language")]
+        language: String,
+        #[serde(default)]
+        components: Option<Value>,
+    },
+}
+
+fn default_language() -> String {
+    "es".to_string()
+}
+
+impl SendRequest {
+    fn payload(&self) -> Value {
+        match self {
+            SendRequest::Text {
+                to,
+                body,
+                preview_url,
+            } => json!({
+                "messaging_product": "whatsapp",
+                "recipient_type": "individual",
+                "to": to,
+                "type": "text",
+                "text": { "preview_url": preview_url, "body": body },
+            }),
+            SendRequest::Template {
+                to,
+                name,
+                language,
+                components,
+            } => {
+                let mut template = json!({
+                    "name": name,
+                    "language": { "code": language },
+                });
+
+                if let Some(components) = components {
+                    template["components"] = components.clone();
+                }
+
+                json!({
+                    "messaging_product": "whatsapp",
+                    "recipient_type": "individual",
+                    "to": to,
+                    "type": "template",
+                    "template": template,
+                })
+            }
+        }
+    }
 }
 
 fn log_events(payload: &Value) {
@@ -171,7 +318,8 @@ fn constant_time_eq(candidate: &str, expected: &str) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use super::constant_time_eq;
+    use super::{constant_time_eq, SendRequest};
+    use serde_json::json;
 
     #[test]
     fn constant_time_eq_matches_equal_values() {
@@ -182,5 +330,46 @@ mod tests {
     fn constant_time_eq_rejects_different_values() {
         assert!(!constant_time_eq("token", "tokeN"));
         assert!(!constant_time_eq("token", "token-longer"));
+    }
+
+    #[test]
+    fn text_payload_matches_the_cloud_api_shape() {
+        let request = SendRequest::Text {
+            to: "15551234567".to_string(),
+            body: "hola".to_string(),
+            preview_url: false,
+        };
+
+        assert_eq!(
+            request.payload(),
+            json!({
+                "messaging_product": "whatsapp",
+                "recipient_type": "individual",
+                "to": "15551234567",
+                "type": "text",
+                "text": { "preview_url": false, "body": "hola" },
+            })
+        );
+    }
+
+    #[test]
+    fn template_payload_includes_language_and_skips_empty_components() {
+        let request: SendRequest = serde_json::from_value(json!({
+            "type": "template",
+            "to": "15551234567",
+            "name": "hello_world",
+        }))
+        .expect("template request should deserialize");
+
+        assert_eq!(
+            request.payload(),
+            json!({
+                "messaging_product": "whatsapp",
+                "recipient_type": "individual",
+                "to": "15551234567",
+                "type": "template",
+                "template": { "name": "hello_world", "language": { "code": "es" } },
+            })
+        );
     }
 }
