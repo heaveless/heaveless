@@ -40,7 +40,7 @@ and the web build fails without `VITE_API_URL`. No defaults.
 
 | Service | Root | Build | Start | Health |
 |---|---|---|---|---|
-| `edge` | `edge` | Dockerfile | Caddy | `/edge-health` |
+| `edge` | `edge` | Dockerfile | Caddy | `/edge_health` |
 | `server` | `server` | Dockerfile | `api` | `/api/health` |
 | `web` | `web` | `npm ci && npm run build` | `npm start` | `/healthz` |
 

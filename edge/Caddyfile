@@ -11,7 +11,7 @@
 		reverse_proxy {$API_UPSTREAM}
 	}
 
-	handle /edge-health {
+	handle /edge_health {
 		respond "ok" 200
 	}
 
