@@ -1,13 +1,9 @@
 # Project skills
 
-Skills live in `.pi/skills/` (project scope). The directory is gitignored as local Pi tooling, so the source of truth for re-creating it is the script:
-
-```bash
-./scripts/sync-skills.sh          # install or update everything
-./scripts/sync-skills.sh --list   # show the manifest
-```
-
-After installing or editing a skill, run `/reload` inside Pi. The local campaign skill is hand-written and is **not** touched by the script.
+Skills live in `.pi/skills/` (project scope). The directory is gitignored as local Pi tooling, so this
+document is the only record of where each one comes from: clone or copy a skill into `.pi/skills/`
+from the source in the manifest, keep its `LICENSE`, then run `/reload` inside Pi. The local campaign
+skill (`heaveless-event-campaign`) is hand-written and lives only in this machine's `.pi/skills/`.
 
 ## Manifest
 
@@ -57,4 +53,6 @@ Skipped on purpose: `nextjs-landing-page` from the Paldom pack. This project is 
 
 ## Moving to committed project skills
 
-If the skills should travel with the repository instead of staying local, change `DEST` in `scripts/sync-skills.sh` to `.agents/skills` and remove `.pi/skills/` from `.gitignore`. Pi discovers `.agents/skills/` from the working directory up to the repository root and other Agent Skills clients can read the same folder.
+If the skills should travel with the repository instead of staying local, copy them to `.agents/skills`
+and remove `.pi/skills/` from `.gitignore`. Pi discovers `.agents/skills/` from the working directory
+up to the repository root and other Agent Skills clients can read the same folder.

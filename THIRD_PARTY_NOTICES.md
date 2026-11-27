@@ -1,6 +1,6 @@
 # Third-party notices
 
-The project-scoped skills in `.pi/skills/` are installed by `scripts/sync-skills.sh` and are not committed to this repository. Each skill keeps the license file shipped by its upstream repository where one exists.
+The project-scoped skills in `.pi/skills/` are not committed to this repository; `docs/skills.md` lists their upstream sources. Each skill keeps the license file shipped by its upstream repository where one exists.
 
 | Source | License | Notes |
 |---|---|---|
