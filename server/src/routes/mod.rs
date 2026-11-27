@@ -1,6 +1,7 @@
 pub mod auth;
 pub mod health;
 pub mod supporters;
+pub mod whatsapp;
 
 use std::sync::Arc;
 
@@ -41,6 +42,10 @@ pub fn router(state: AppState) -> Router {
         .route("/api/auth/tiktok/callback", get(auth::callback))
         .route("/api/auth/logout", post(auth::logout))
         .route("/api/supporters", get(supporters::list))
+        .route(
+            "/api/whatsapp/webhook",
+            get(whatsapp::verify).post(whatsapp::receive),
+        )
         .layer(cors)
         .layer(TraceLayer::new_for_http())
         .with_state(state)

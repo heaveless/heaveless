@@ -15,6 +15,21 @@ pub struct Config {
     pub session_ttl_days: i64,
     pub cookie_secure: bool,
     pub tiktok: TikTokConfig,
+    pub whatsapp: WhatsAppConfig,
+}
+
+pub struct WhatsAppConfig {
+    /// Echoed back during Meta's GET challenge; unset disables the endpoint.
+    pub verify_token: Option<String>,
+    /// When set, POST payloads must carry a matching X-Hub-Signature-256.
+    pub app_secret: Option<String>,
+}
+
+fn optional(name: &str) -> Option<String> {
+    std::env::var(name)
+        .ok()
+        .map(|value| value.trim().to_string())
+        .filter(|value| !value.is_empty())
 }
 
 fn required(name: &str) -> Result<String> {
@@ -64,6 +79,10 @@ impl Config {
             tiktok: TikTokConfig {
                 client_key: required("TIKTOK_CLIENT_KEY")?,
                 client_secret: required("TIKTOK_CLIENT_SECRET")?,
+            },
+            whatsapp: WhatsAppConfig {
+                verify_token: optional("WHATSAPP_VERIFY_TOKEN"),
+                app_secret: optional("WHATSAPP_APP_SECRET"),
             },
         })
     }
