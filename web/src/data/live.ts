@@ -1,12 +1,6 @@
 
 export type SupporterTier = 'founder' | 'builder' | 'supporter'
 
-export interface LiveSession {
-  name: string
-  handle: string
-  avatar: string
-}
-
 export interface Supporter {
   name: string
   handle?: string

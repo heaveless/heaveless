@@ -33,3 +33,6 @@ server/.env
 
 # Playwright MCP output
 .playwright-mcp/
+
+# Rust
+server/target

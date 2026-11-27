@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'preact/hooks'
 import { toDataURL } from 'qrcode'
-import { donationPresets, payment, type LiveSession } from '../../data/live'
+import { donationPresets, payment } from '../../data/live'
+import type { SessionUser } from '../../lib/api'
 import { TikTokLoginButton } from '../auth/TikTokLoginButton'
 
 type Step = 'login' | 'amount' | 'pay' | 'done'
 
 interface DonationFlowProps {
   open: boolean
-  session: LiveSession | null
+  session: SessionUser | null
   initialAmount?: number
   onLogin: () => void
   onCompleted: () => void
@@ -148,7 +149,7 @@ export function DonationFlow({ open, session, initialAmount, onLogin, onComplete
         <div className="flex items-start justify-between gap-4">
           <h2 id="donation-flow-title" aria-live="polite" className="m-0 text-[clamp(1.6rem,5vw,2.1rem)] leading-[.95] tracking-[-.06em]">
             {step === 'done' && session
-              ? <>Thank you, <span className="text-coral">{session.handle || session.name}</span>.</>
+              ? <>Thank you, <span className="text-coral">{session.name}</span>.</>
               : title}
           </h2>
           <button type="button" onClick={onClose} aria-label="Close donation form" className="-mr-1 -mt-1 grid size-8 shrink-0 cursor-pointer place-items-center text-lg leading-none text-muted transition-colors hover:text-ink">×</button>

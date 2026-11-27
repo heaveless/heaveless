@@ -1,6 +1,7 @@
 import { useState } from 'preact/hooks'
 import { eventCopy, type Lang } from '../data/event'
 import { useTikTokSession } from '../lib/useTikTokSession'
+import { useSupporters } from '../lib/useSupporters'
 import { useEventDocument } from '../lib/useEventDocument'
 import { LangContext, rememberLang, storedLang, useLang } from '../components/event/lang'
 import { EventHeader } from '../components/event/EventHeader'
@@ -32,6 +33,7 @@ export function EventPage() {
 function EventBody() {
   const { lang, t } = useLang()
   const { session, authNotice, login, logout } = useTikTokSession()
+  const supporters = useSupporters()
   useEventDocument(lang, t)
 
   return (
@@ -48,7 +50,13 @@ function EventBody() {
           <EventPlan />
           <GiftCards />
           <EventNote />
-          <SupportersWall session={session} authNotice={authNotice} onLogin={login} onLogout={logout} />
+          <SupportersWall
+            supporters={supporters}
+            session={session}
+            authNotice={authNotice}
+            onLogin={login}
+            onLogout={logout}
+          />
         </div>
       </main>
 

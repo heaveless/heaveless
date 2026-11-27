@@ -1,22 +1,28 @@
+import { useState } from 'preact/hooks'
 import { clsx } from 'clsx'
-import { christmasEvent as event } from '../../data/event'
-import type { SessionUser } from '../../lib/api'
+import type { SessionUser, Supporter } from '../../lib/api'
 import type { AuthNotice } from '../../lib/useTikTokSession'
 import { TikTokLoginButton } from '../auth/TikTokLoginButton'
 import { useLang } from './lang'
 import { SECTION, SectionHead, WRAP } from './ui'
 
-interface SupportersWallProps {
+interface LoginPanelProps {
   session: SessionUser | null
   authNotice: AuthNotice
   onLogin: () => void
   onLogout: () => void
 }
 
+interface SupportersWallProps extends LoginPanelProps {
+  supporters: Supporter[]
+}
+
 const NOTICE_KEY = { error: 'authError', missing: 'authMissing' } as const
 
 function Avatar({ src, name }: { src?: string; name: string }) {
-  if (src) {
+  const [failed, setFailed] = useState(false)
+
+  if (src && !failed) {
     return (
       <img
         className="size-10 shrink-0 rounded-full bg-paper-2 object-cover"
@@ -24,6 +30,7 @@ function Avatar({ src, name }: { src?: string; name: string }) {
         width="40"
         height="40"
         loading="lazy"
+        onError={() => setFailed(true)}
         alt=""
       />
     )
@@ -39,7 +46,7 @@ function Avatar({ src, name }: { src?: string; name: string }) {
   )
 }
 
-function LoginPanel({ session, authNotice, onLogin, onLogout }: SupportersWallProps) {
+function LoginPanel({ session, authNotice, onLogin, onLogout }: LoginPanelProps) {
   const { t } = useLang()
 
   return (
@@ -69,7 +76,7 @@ function LoginPanel({ session, authNotice, onLogin, onLogout }: SupportersWallPr
             <div className="min-w-0">
               <p className="m-0 truncate text-[0.92rem] font-semibold text-paper">{session.name}</p>
               <p className="mt-0.5 mb-0 truncate text-[9px] font-bold uppercase tracking-[.14em] text-paper/60">
-                {session.handle || t.wall.signedIn}
+                {t.wall.signedIn}
               </p>
             </div>
             <button
@@ -88,26 +95,23 @@ function LoginPanel({ session, authNotice, onLogin, onLogout }: SupportersWallPr
   )
 }
 
-export function SupportersWall({ session, authNotice, onLogin, onLogout }: SupportersWallProps) {
+export function SupportersWall({ supporters, session, authNotice, onLogin, onLogout }: SupportersWallProps) {
   const { t } = useLang()
-  const people = session
-    ? [{ name: session.name, avatar: session.avatar, you: true }, ...event.supporters]
-    : event.supporters
 
   return (
     <section id="wall" className={SECTION} aria-labelledby="wall-title">
       <div className={clsx(WRAP, 'py-14 min-[768px]:py-20')}>
         <SectionHead id="wall-title" kicker={t.wall.kicker} title={t.wall.title} intro={t.wall.intro} />
 
-        {people.length > 0 ? (
+        {supporters.length > 0 ? (
           <ul className="m-0 mt-8 grid list-none grid-cols-1 gap-3 p-0 min-[480px]:grid-cols-2 min-[900px]:grid-cols-4">
-            {people.map((person, index) => (
-              <li key={`${person.name}-${index}`} className="paper-card flex items-center gap-3 rounded-2xl p-3.5">
+            {supporters.map(person => (
+              <li key={person.id} className="paper-card flex items-center gap-3 rounded-2xl p-3.5">
                 <Avatar src={person.avatar} name={person.name} />
                 <div className="min-w-0">
                   <p className="m-0 truncate text-[0.92rem] font-semibold text-forest">{person.name}</p>
                   <p className="mt-0.5 mb-0 text-[9px] font-bold uppercase tracking-[.14em] text-pine-600">
-                    {person.you ? t.wall.you : t.wall.onWall}
+                    {person.id === session?.id ? t.wall.you : t.wall.onWall}
                   </p>
                 </div>
               </li>

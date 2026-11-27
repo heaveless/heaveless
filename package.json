@@ -5,7 +5,9 @@
     "node": ">=20"
   },
   "scripts": {
-    "build": "npm --prefix web ci && npm --prefix web run build && npm --prefix server ci",
-    "start": "node server/index.js"
+    "dev:web": "npm --prefix web run dev",
+    "dev:api": "cargo run --manifest-path server/Cargo.toml",
+    "build": "npm --prefix web run build",
+    "build:api": "cargo build --manifest-path server/Cargo.toml --release"
   }
 }

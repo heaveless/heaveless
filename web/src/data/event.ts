@@ -4,12 +4,6 @@ import { es } from './event.es'
 export type Lang = 'en' | 'es'
 export type StepStatus = 'done' | 'next' | 'later'
 
-export interface Supporter {
-  name: string
-  avatar?: string
-  you?: boolean
-}
-
 export interface PlanStep {
   date: string
 }
@@ -69,7 +63,6 @@ export interface ChristmasEvent {
   contactEmail: string
   signature: string
   plan: PlanStep[]
-  supporters: Supporter[]
 }
 
 export const christmasEvent: ChristmasEvent = {
@@ -80,7 +73,6 @@ export const christmasEvent: ChristmasEvent = {
   contactEmail: 'hi@heaveless.com',
   signature: 'heaveless',
   plan: [{ date: '2026-11-20' }, { date: '2026-12-01' }, { date: '2026-12-20' }, { date: '2026-12-24' }],
-  supporters: [],
 }
 
 export const eventCopy: Record<Lang, EventCopy> = { en, es }

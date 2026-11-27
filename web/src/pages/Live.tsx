@@ -52,13 +52,12 @@ export function LivePage() {
     setBoard(current => {
       if (current.some(item => item.you)) {
         return current.map(item =>
-          item.you ? { ...item, name: session.name, handle: session.handle || undefined, avatar: session.avatar } : item,
+          item.you ? { ...item, name: session.name, avatar: session.avatar } : item,
         )
       }
       return [
         {
           name: session.name,
-          handle: session.handle || undefined,
           tier: 'supporter',
           since: 'Just now',
           avatar: session.avatar,
@@ -107,15 +106,15 @@ export function LivePage() {
                 <button
                   type="button"
                   onClick={logout}
-                  aria-label={session.handle ? `Log out of ${session.handle}` : 'Log out'}
+                  aria-label="Log out"
                   className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 border border-line px-3 font-mono text-[9px] uppercase tracking-[.1em] text-muted transition-colors hover:border-coral hover:text-ink min-[640px]:hidden"
                 >
-                  <span className="normal-case tracking-[.06em] text-ink">{session.handle || session.name}</span>
+                  <span className="normal-case tracking-[.06em] text-ink">{session.name}</span>
                   <span className="text-line" aria-hidden="true">·</span>
                   <span>Log out</span>
                 </button>
                 <div className="hidden items-center gap-2 min-[640px]:flex">
-                  <span className="font-mono text-[9px] tracking-[.1em] text-muted">{session.handle || session.name}</span>
+                  <span className="font-mono text-[9px] tracking-[.1em] text-muted">{session.name}</span>
                   <button
                     type="button"
                     onClick={logout}
