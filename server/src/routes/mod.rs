@@ -35,7 +35,7 @@ pub fn router(state: AppState) -> Router {
         .allow_headers([header::CONTENT_TYPE]);
 
     Router::new()
-        .route("/health", get(health::health))
+        .route("/api/health", get(health::health))
         .route("/api/auth/session", get(auth::session))
         .route("/api/auth/tiktok/start", get(auth::start))
         .route("/api/auth/tiktok/callback", get(auth::callback))
