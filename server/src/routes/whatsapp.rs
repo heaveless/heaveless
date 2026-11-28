@@ -5,13 +5,11 @@ use axum::extract::{Query, State};
 use axum::http::{header, HeaderMap, StatusCode};
 use axum::response::{IntoResponse, Response};
 use axum::Json;
-use chrono::{DateTime, Utc};
 use hmac::{Hmac, Mac};
 use reqwest::Client;
 use serde::Deserialize;
 use serde_json::{json, Value};
 use sha2::Sha256;
-use sqlx::{FromRow, PgPool};
 
 use super::AppState;
 
@@ -56,28 +54,6 @@ fn default_language() -> String {
 }
 
 impl SendRequest {
-    pub fn to(&self) -> &str {
-        match self {
-            SendRequest::Text { to, .. } | SendRequest::Template { to, .. } => to,
-        }
-    }
-
-    pub fn kind(&self) -> &'static str {
-        match self {
-            SendRequest::Text { .. } => "text",
-            SendRequest::Template { .. } => "template",
-        }
-    }
-
-    pub fn summary(&self) -> String {
-        match self {
-            SendRequest::Text { body, .. } => body.clone(),
-            SendRequest::Template {
-                name, language, ..
-            } => format!("plantilla {name} ({language})"),
-        }
-    }
-
     fn payload(&self) -> Value {
         match self {
             SendRequest::Text {
@@ -118,17 +94,6 @@ impl SendRequest {
     }
 }
 
-#[derive(Debug, FromRow)]
-pub struct MessageRecord {
-    pub direction: String,
-    pub phone: String,
-    pub contact_name: Option<String>,
-    pub kind: String,
-    pub body: Option<String>,
-    pub status: Option<String>,
-    pub created_at: DateTime<Utc>,
-}
-
 /// GET /api/whatsapp/webhook
 ///
 /// Handshake Meta runs once when the callback URL is registered: it must be
@@ -157,7 +122,7 @@ pub async fn verify(State(state): State<AppState>, Query(query): Query<Challenge
 /// POST /api/whatsapp/webhook
 ///
 /// Receives message and status events. Meta only needs a fast 2xx, so payloads
-/// are stored and logged rather than processed inline.
+/// are logged rather than processed inline; anything slow belongs in a job.
 pub async fn receive(State(state): State<AppState>, headers: HeaderMap, body: Bytes) -> Response {
     if let Some(secret) = state.config.whatsapp.app_secret.as_deref() {
         let signature = headers
@@ -178,7 +143,6 @@ pub async fn receive(State(state): State<AppState>, headers: HeaderMap, body: By
         }
     };
 
-    store_events(&state.pool, &payload).await;
     log_events(&payload);
     (StatusCode::OK, "EVENT_RECEIVED").into_response()
 }
@@ -193,7 +157,9 @@ pub async fn send(
     headers: HeaderMap,
     Json(request): Json<SendRequest>,
 ) -> Response {
-    let Some(secret) = state.config.whatsapp.send_secret.as_deref() else {
+    let config = &state.config.whatsapp;
+
+    let Some(secret) = config.send_secret.as_deref() else {
         tracing::warn!("whatsapp send called but WHATSAPP_SEND_SECRET is not set");
         return StatusCode::SERVICE_UNAVAILABLE.into_response();
     };
@@ -209,27 +175,13 @@ pub async fn send(
         return StatusCode::UNAUTHORIZED.into_response();
     }
 
-    match deliver(&state, &request).await {
-        Ok(response) => (StatusCode::OK, Json(response)).into_response(),
-        Err((status, body)) => (status, Json(body)).into_response(),
-    }
-}
-
-/// Sends a message and records it, so both the HTTP endpoint and the inbox page
-/// share one code path.
-pub async fn deliver(state: &AppState, request: &SendRequest) -> Result<Value, (StatusCode, Value)> {
-    let config = &state.config.whatsapp;
-
     let (Some(access_token), Some(phone_number_id)) =
         (config.access_token.as_deref(), config.phone_number_id.as_deref())
     else {
         tracing::warn!(
             "whatsapp send called without WHATSAPP_ACCESS_TOKEN or WHATSAPP_PHONE_NUMBER_ID"
         );
-        return Err((
-            StatusCode::SERVICE_UNAVAILABLE,
-            json!({ "error": "whatsapp sending is not configured" }),
-        ));
+        return StatusCode::SERVICE_UNAVAILABLE.into_response();
     };
 
     let url = format!(
@@ -253,140 +205,21 @@ pub async fn deliver(state: &AppState, request: &SendRequest) -> Result<Value, (
 
             if status.is_success() {
                 tracing::info!(status = status.as_u16(), "whatsapp message accepted");
-                let id = body
-                    .get("messages")
-                    .and_then(Value::as_array)
-                    .and_then(|messages| messages.first())
-                    .and_then(|message| message.get("id"))
-                    .and_then(Value::as_str);
-
-                store_outbound(&state.pool, request, id).await;
-                Ok(body)
+                (StatusCode::OK, Json(body)).into_response()
             } else {
                 tracing::warn!(status = status.as_u16(), %body, "whatsapp send rejected");
-                Err((StatusCode::BAD_GATEWAY, body))
+                (StatusCode::BAD_GATEWAY, Json(body)).into_response()
             }
         }
         Err(error) => {
             tracing::error!(%error, "whatsapp send request failed");
-            Err((
+            (
                 StatusCode::BAD_GATEWAY,
-                json!({ "error": "graph request failed" }),
-            ))
+                Json(json!({ "error": "graph request failed" })),
+            )
+                .into_response()
         }
     }
-}
-
-async fn store_outbound(pool: &PgPool, request: &SendRequest, wa_message_id: Option<&str>) {
-    let result = sqlx::query(
-        "insert into whatsapp_messages (wa_message_id, direction, phone, kind, body, status)
-         values ($1, 'out', $2, $3, $4, 'accepted')
-         on conflict do nothing",
-    )
-    .bind(wa_message_id)
-    .bind(request.to())
-    .bind(request.kind())
-    .bind(request.summary())
-    .execute(pool)
-    .await;
-
-    if let Err(error) = result {
-        tracing::warn!(%error, "could not store outbound whatsapp message");
-    }
-}
-
-async fn store_events(pool: &PgPool, payload: &Value) {
-    let Some(entries) = payload.get("entry").and_then(Value::as_array) else {
-        return;
-    };
-
-    for entry in entries {
-        let Some(changes) = entry.get("changes").and_then(Value::as_array) else {
-            continue;
-        };
-
-        for change in changes {
-            let value = change.get("value").cloned().unwrap_or(Value::Null);
-            let contact_name = value
-                .get("contacts")
-                .and_then(Value::as_array)
-                .and_then(|contacts| contacts.first())
-                .and_then(|contact| contact.get("profile"))
-                .and_then(|profile| profile.get("name"))
-                .and_then(Value::as_str);
-
-            if let Some(messages) = value.get("messages").and_then(Value::as_array) {
-                for message in messages {
-                    let id = message.get("id").and_then(Value::as_str);
-                    let from = message.get("from").and_then(Value::as_str).unwrap_or_default();
-                    let kind = message
-                        .get("type")
-                        .and_then(Value::as_str)
-                        .unwrap_or("unknown");
-                    let body = message
-                        .get("text")
-                        .and_then(|text| text.get("body"))
-                        .and_then(Value::as_str);
-
-                    let result = sqlx::query(
-                        "insert into whatsapp_messages (wa_message_id, direction, phone, contact_name, kind, body)
-                         values ($1, 'in', $2, $3, $4, $5)
-                         on conflict do nothing",
-                    )
-                    .bind(id)
-                    .bind(from)
-                    .bind(contact_name)
-                    .bind(kind)
-                    .bind(body)
-                    .execute(pool)
-                    .await;
-
-                    if let Err(error) = result {
-                        tracing::warn!(%error, "could not store inbound whatsapp message");
-                    }
-                }
-            }
-
-            if let Some(statuses) = value.get("statuses").and_then(Value::as_array) {
-                for status in statuses {
-                    let id = status.get("id").and_then(Value::as_str);
-                    let name = status.get("status").and_then(Value::as_str);
-
-                    let (Some(id), Some(name)) = (id, name) else {
-                        continue;
-                    };
-
-                    let result = sqlx::query(
-                        "update whatsapp_messages set status = $1 where wa_message_id = $2",
-                    )
-                    .bind(name)
-                    .bind(id)
-                    .execute(pool)
-                    .await;
-
-                    if let Err(error) = result {
-                        tracing::warn!(%error, "could not update whatsapp message status");
-                    }
-                }
-            }
-        }
-    }
-}
-
-pub async fn recent_messages(pool: &PgPool, limit: i64) -> Vec<MessageRecord> {
-    sqlx::query_as::<_, MessageRecord>(
-        "select direction, phone, contact_name, kind, body, status, created_at
-           from whatsapp_messages
-          order by created_at desc
-          limit $1",
-    )
-    .bind(limit)
-    .fetch_all(pool)
-    .await
-    .unwrap_or_else(|error| {
-        tracing::warn!(%error, "could not read whatsapp messages");
-        Vec::new()
-    })
 }
 
 fn log_events(payload: &Value) {
@@ -468,7 +301,7 @@ fn signature_matches(secret: &str, body: &[u8], header: Option<&str>) -> bool {
     mac.verify_slice(&expected).is_ok()
 }
 
-pub(crate) fn constant_time_eq(candidate: &str, expected: &str) -> bool {
+fn constant_time_eq(candidate: &str, expected: &str) -> bool {
     let (candidate, expected) = (candidate.as_bytes(), expected.as_bytes());
 
     if candidate.len() != expected.len() {

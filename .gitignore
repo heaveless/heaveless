@@ -36,3 +36,6 @@ server/.env
 
 # Rust
 server/target
+
+# documentos personales
+/docs/extra/

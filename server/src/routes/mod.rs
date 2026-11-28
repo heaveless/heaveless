@@ -1,6 +1,5 @@
 pub mod auth;
 pub mod health;
-pub mod inbox;
 pub mod supporters;
 pub mod whatsapp;
 
@@ -48,8 +47,6 @@ pub fn router(state: AppState) -> Router {
             get(whatsapp::verify).post(whatsapp::receive),
         )
         .route("/api/whatsapp/send", post(whatsapp::send))
-        .route("/api/admin/whatsapp", get(inbox::page))
-        .route("/api/admin/whatsapp/send", post(inbox::send))
         .layer(cors)
         .layer(TraceLayer::new_for_http())
         .with_state(state)
