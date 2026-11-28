@@ -194,9 +194,10 @@ fn shell(title: &str, body: &str) -> String {    format!(
   }}
   .panel-head strong {{ font-variant-numeric: tabular-nums; letter-spacing: -.01em; }}
   .messages {{
-    flex: 1; overflow-y: auto; padding: 24px 26px 8px;
-    display: flex; flex-direction: column; gap: 10px;
+    flex: 1; overflow-y: auto; padding: 24px 26px 20px;
+    display: flex; flex-direction: column; justify-content: flex-end; gap: 10px;
   }}
+  .messages > *:first-child {{ margin-top: auto; }}
   .bubble {{
     max-width: min(560px, 82%); padding: 11px 14px; border-radius: 14px;
     border: 1px solid var(--line); background: var(--surface);
@@ -350,6 +351,12 @@ Cuando alguien escriba al número de WhatsApp del negocio, la conversación apar
         .collect::<String>();
 
     let count = thread.len();
+    let plural = if count == 1 { "mensaje" } else { "mensajes" };
+    let threads_label = if order.len() == 1 {
+        "conversación"
+    } else {
+        "conversaciones"
+    };
 
     let mut page = shell(
         "heaveless · whatsapp",
@@ -360,12 +367,12 @@ Cuando alguien escriba al número de WhatsApp del negocio, la conversación apar
 </header>
 <main>
   <nav class="threads">
-    <span class="label">{conversations} conversaciones</span>
+    <span class="label">{conversations} {threads_label}</span>
     {threads}
   </nav>
   <section class="panel">
     <div class="panel-head">
-      <div><strong>{current}</strong><div class="label">{count} mensajes</div></div>
+      <div><strong>{current}</strong><div class="label">{count} · {plural}</div></div>
       <span class="label">se actualiza cada 20 s</span>
     </div>
     <div class="messages">{bubbles}</div>
@@ -379,9 +386,11 @@ Cuando alguien escriba al número de WhatsApp del negocio, la conversación apar
   </section>
 </main>"#,
             conversations = order.len(),
+            threads_label = threads_label,
             threads = thread_rows,
             current = escape(&current),
             count = count,
+            plural = plural,
             bubbles = bubbles,
             token = token_html,
         ),
