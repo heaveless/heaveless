@@ -29,6 +29,8 @@ pub struct WhatsAppConfig {
     pub phone_number_id: Option<String>,
     /// Shared secret callers present as `Authorization: Bearer ...`.
     pub send_secret: Option<String>,
+    /// Token that unlocks the read-only message inbox at /admin/whatsapp.
+    pub admin_token: Option<String>,
     /// Graph API version, for example `v23.0`.
     pub graph_version: String,
 }
@@ -94,6 +96,7 @@ impl Config {
                 access_token: optional("WHATSAPP_ACCESS_TOKEN"),
                 phone_number_id: optional("WHATSAPP_PHONE_NUMBER_ID"),
                 send_secret: optional("WHATSAPP_SEND_SECRET"),
+                admin_token: optional("WHATSAPP_ADMIN_TOKEN"),
                 graph_version: optional("WHATSAPP_GRAPH_VERSION").unwrap_or_else(|| "v23.0".to_string()),
             },
         })
