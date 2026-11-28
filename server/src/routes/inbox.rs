@@ -294,6 +294,15 @@ Cuando alguien escriba al número de WhatsApp del negocio, la conversación apar
         .map(str::to_string)
         .unwrap_or_else(|| order[0].clone());
 
+    let mut names: HashMap<String, String> = HashMap::new();
+    for message in messages {
+        if let Some(name) = message.contact_name.as_deref() {
+            names.entry(message.phone.clone()).or_insert_with(|| name.to_string());
+        }
+    }
+
+    let label_for = |phone: &str| names.get(phone).cloned().unwrap_or_else(|| phone.to_string());
+
     let thread_rows = order
         .iter()
         .map(|phone| {
@@ -315,7 +324,7 @@ Cuando alguien escriba al número de WhatsApp del negocio, la conversación apar
                 phone = urlencode(phone),
                 current = if phone == &current { " aria-current=\"true\"" } else { "" },
                 when = clock(latest.created_at),
-                label = escape(phone),
+                label = escape(&label_for(phone)),
                 arrow = arrow,
                 preview = escape(&truncate(&preview, 60)),
             )
@@ -372,7 +381,7 @@ Cuando alguien escriba al número de WhatsApp del negocio, la conversación apar
   </nav>
   <section class="panel">
     <div class="panel-head">
-      <div><strong>{current}</strong><div class="label">{count} · {plural}</div></div>
+      <div><strong>{current_label}</strong><div class="label">{current_phone} · {count} {plural}</div></div>
       <span class="label">se actualiza cada 20 s</span>
     </div>
     <div class="messages">{bubbles}</div>
@@ -389,6 +398,8 @@ Cuando alguien escriba al número de WhatsApp del negocio, la conversación apar
             threads_label = threads_label,
             threads = thread_rows,
             current = escape(&current),
+            current_label = escape(&label_for(&current)),
+            current_phone = escape(&current),
             count = count,
             plural = plural,
             bubbles = bubbles,

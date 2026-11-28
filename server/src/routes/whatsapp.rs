@@ -122,6 +122,7 @@ impl SendRequest {
 pub struct MessageRecord {
     pub direction: String,
     pub phone: String,
+    pub contact_name: Option<String>,
     pub kind: String,
     pub body: Option<String>,
     pub status: Option<String>,
@@ -306,6 +307,13 @@ async fn store_events(pool: &PgPool, payload: &Value) {
 
         for change in changes {
             let value = change.get("value").cloned().unwrap_or(Value::Null);
+            let contact_name = value
+                .get("contacts")
+                .and_then(Value::as_array)
+                .and_then(|contacts| contacts.first())
+                .and_then(|contact| contact.get("profile"))
+                .and_then(|profile| profile.get("name"))
+                .and_then(Value::as_str);
 
             if let Some(messages) = value.get("messages").and_then(Value::as_array) {
                 for message in messages {
@@ -321,12 +329,13 @@ async fn store_events(pool: &PgPool, payload: &Value) {
                         .and_then(Value::as_str);
 
                     let result = sqlx::query(
-                        "insert into whatsapp_messages (wa_message_id, direction, phone, kind, body)
-                         values ($1, 'in', $2, $3, $4)
+                        "insert into whatsapp_messages (wa_message_id, direction, phone, contact_name, kind, body)
+                         values ($1, 'in', $2, $3, $4, $5)
                          on conflict do nothing",
                     )
                     .bind(id)
                     .bind(from)
+                    .bind(contact_name)
                     .bind(kind)
                     .bind(body)
                     .execute(pool)
@@ -366,7 +375,7 @@ async fn store_events(pool: &PgPool, payload: &Value) {
 
 pub async fn recent_messages(pool: &PgPool, limit: i64) -> Vec<MessageRecord> {
     sqlx::query_as::<_, MessageRecord>(
-        "select direction, phone, kind, body, status, created_at
+        "select direction, phone, contact_name, kind, body, status, created_at
            from whatsapp_messages
           order by created_at desc
           limit $1",
