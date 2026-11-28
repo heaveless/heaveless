@@ -20,7 +20,7 @@ pub struct SendForm {
     body: String,
 }
 
-/// GET /admin/whatsapp?token=…
+/// GET /api/admin/whatsapp?token=…
 ///
 /// A deliberately small inbox: the last messages plus a box to reply. Reads are
 /// gated by `WHATSAPP_ADMIN_TOKEN` because it exposes customer conversations.
@@ -41,7 +41,7 @@ pub async fn page(State(state): State<AppState>, Query(query): Query<PageQuery>)
     Html(render(&messages, expected, query.to.as_deref())).into_response()
 }
 
-/// POST /admin/whatsapp/send
+/// POST /api/admin/whatsapp/send
 pub async fn send(State(state): State<AppState>, Form(form): Form<SendForm>) -> Response {
     let Some(expected) = state.config.whatsapp.admin_token.as_deref() else {
         return (StatusCode::SERVICE_UNAVAILABLE, "inbox is not configured").into_response();
@@ -58,11 +58,11 @@ pub async fn send(State(state): State<AppState>, Form(form): Form<SendForm>) -> 
     };
 
     match deliver(&state, &request).await {
-        Ok(_) => Redirect::to(&format!("/admin/whatsapp?token={}", urlencode(expected))).into_response(),
+        Ok(_) => Redirect::to(&format!("/api/admin/whatsapp?token={}", urlencode(expected))).into_response(),
         Err((status, body)) => (
             status,
             Html(format!(
-                "<p>No se pudo enviar: <code>{}</code></p><p><a href=\"/admin/whatsapp?token={}\">volver</a></p>",
+                "<p>No se pudo enviar: <code>{}</code></p><p><a href=\"/api/admin/whatsapp?token={}\">volver</a></p>",
                 escape(&body.to_string()),
                 escape(expected)
             )),
@@ -158,7 +158,7 @@ fn render(messages: &[super::whatsapp::MessageRecord], token: &str, to: Option<&
 <body>
 <h1>heaveless · whatsapp</h1>
 <p class="hint">Últimos 100 mensajes. La página se refresca sola cada 20 s.</p>
-<form method="post" action="/admin/whatsapp/send">
+<form method="post" action="/api/admin/whatsapp/send">
   <input type="hidden" name="token" value="{token}">
   <input name="to" value="{default_to}" placeholder="51972351040" required>
   <textarea name="body" placeholder="Escribe una respuesta…" required></textarea>

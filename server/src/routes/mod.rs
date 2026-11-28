@@ -48,8 +48,8 @@ pub fn router(state: AppState) -> Router {
             get(whatsapp::verify).post(whatsapp::receive),
         )
         .route("/api/whatsapp/send", post(whatsapp::send))
-        .route("/admin/whatsapp", get(inbox::page))
-        .route("/admin/whatsapp/send", post(inbox::send))
+        .route("/api/admin/whatsapp", get(inbox::page))
+        .route("/api/admin/whatsapp/send", post(inbox::send))
         .layer(cors)
         .layer(TraceLayer::new_for_http())
         .with_state(state)
